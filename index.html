@@ -83,7 +83,8 @@ body{letter-spacing:-.015em}
 .bar{z-index:12}
 .topcover{position:fixed;left:0;right:0;top:0;height:calc(env(safe-area-inset-top,0px) + 6px);background:var(--bg);z-index:13;pointer-events:none;opacity:0;transition:opacity .15s}
 .topcover.on{opacity:1}
-.qr{position:relative;z-index:11;display:block;width:104px;height:104px;margin:22px auto 0;border-radius:10px;background:#fff;box-shadow:0 1px 0 rgba(0,0,0,.04)}
+.qr{position:relative;z-index:11;display:block;width:92px;height:92px;margin:26px auto 4px}
+.qr img{width:100%;height:100%;display:block}
 </style>
 <div class="wrap">
 <div class="hero"><img src="img/hero.jpg" alt="TAL cafe &amp; restaurant" fetchpriority="high"></div>
@@ -110,7 +111,7 @@ body{letter-spacing:-.015em}
 </svg>
 </div>
   <div class="tag" id="tag"></div>
-  <img class="qr" src="qr.png" width="104" height="104" alt="QR-код меню TAL">
+  <picture class="qr"><source srcset="qr-dark.png" media="(prefers-color-scheme: dark)"><img src="qr.png" width="92" height="92" alt="QR-код меню TAL"></picture>
 </header>
 <div class="bar">
   <div class="lang" role="group" aria-label="Тіл / Язык">
