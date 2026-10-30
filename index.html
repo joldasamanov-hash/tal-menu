@@ -115,7 +115,7 @@ footer .qrrow{margin:0 0 26px}
 .toqr.show{opacity:1;transform:none;pointer-events:auto}
 .toqr svg{width:22px;height:22px}
 .toqr:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
-main section+section::before{left:50%;right:auto;width:var(--ow,288px);transform:translateX(-50%);background-size:auto 16px;background-repeat:repeat-x;background-position:left center}
+main section+section::before{left:50%;right:auto;width:var(--ow,288px);transform:translateX(-50%);background-size:18px 16px;background-repeat:space no-repeat;background-position:center}
 .totop,.toqr{right:calc(max(16px,env(safe-area-inset-right,0px)) + 14px);bottom:calc(max(16px,env(safe-area-inset-bottom,0px)) - 8px)}
 </style>
 <div class="wrap">
@@ -242,6 +242,6 @@ addEventListener('scroll',f,{passive:true});f();
 b.addEventListener('click',()=>{gone=true;b.classList.remove('show');const r=matchMedia('(prefers-reduced-motion: reduce)').matches;
 q.scrollIntoView({behavior:r?'auto':'smooth',block:'center'})});})();
 
-(function(){const T=16*49/44;function f(){const w=document.getElementById('menu').clientWidth+12;document.documentElement.style.setProperty('--ow',(Math.floor(w/T)*T).toFixed(2)+'px')}
+(function(){const T=18;function f(){const w=document.getElementById('menu').clientWidth+12;document.documentElement.style.setProperty('--ow',(Math.floor(w/T)*T)+'px')}
 f();addEventListener('resize',f);})();
 </script>
