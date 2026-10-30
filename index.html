@@ -81,6 +81,8 @@ body{letter-spacing:-.015em}
 .bar::after{content:"";position:absolute;right:-6px;bottom:0;width:56px;height:var(--ch,50px);border-radius:0 12px 12px 0;pointer-events:none;background:linear-gradient(to right,rgba(74,59,44,0),#4a3b2c 80%);transition:opacity .2s}
 .bar.end::after{opacity:0}
 .bar{z-index:12}
+.topcover{position:fixed;left:0;right:0;top:0;height:calc(env(safe-area-inset-top,0px) + 6px);background:var(--bg);z-index:13;pointer-events:none;opacity:0;transition:opacity .15s}
+.topcover.on{opacity:1}
 </style>
 <div class="wrap">
 <div class="hero"><img src="img/hero.jpg" alt="TAL cafe &amp; restaurant" fetchpriority="high"></div>
@@ -186,4 +188,9 @@ c.addEventListener('scroll',f,{passive:true});addEventListener('resize',f);setTi
 (function(){try{if('scrollRestoration' in history)history.scrollRestoration='manual'}catch(e){}
 function top(){if(!location.hash)window.scrollTo(0,0)}
 top();addEventListener('load',top);addEventListener('pageshow',top);})();
+
+(function(){const t=document.createElement('div');t.className='topcover';t.setAttribute('aria-hidden','true');document.body.appendChild(t);
+const c=document.getElementById('chips');
+function f(){t.classList.toggle('on',c&&c.getBoundingClientRect().top<=parseFloat(getComputedStyle(t).height)+2)}
+addEventListener('scroll',f,{passive:true});addEventListener('resize',f);f();})();
 </script>
