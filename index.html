@@ -124,6 +124,8 @@ header .tag{font-family:var(--sans);font-weight:400;font-size:17px;letter-spacin
 header{position:relative;z-index:11;background:var(--bg);box-shadow:0 0 0 100vw var(--bg);clip-path:inset(0 -100vw)}
 .hswallow{position:absolute;left:-14px;top:6px;width:130px;aspect-ratio:377/356;background:url(img/hswallow.png) center/contain no-repeat;pointer-events:none;z-index:0}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .hswallow{background-image:url(img/hswallow-dark.png)}}
+.hswallow{z-index:2}
+header .tag{z-index:1}
 </style>
 <div class="wrap">
 <div class="hero"><img src="img/hero.jpg" alt="TAL cafe &amp; restaurant" fetchpriority="high"></div>
