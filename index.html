@@ -91,6 +91,10 @@ body{letter-spacing:-.015em}
 .totop:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 .qrwrap{position:relative;z-index:11;width:190px;height:110px;margin:18px auto 0}
 .eagles img{width:100%;height:100%;display:block}
+.qrrow{position:relative;z-index:11;display:flex;align-items:center;justify-content:center;gap:4px;width:100vw;margin:18px 0 0 calc(50% - 50vw)}
+.qrrow .qrwrap{margin:0;flex:none}
+.qrband{flex:1;height:20px;background:url(ornqr.png) center/66px 20px;background-repeat:round no-repeat}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .qrband{background-image:url(ornqr-dark.png)}}
 </style>
 <div class="wrap">
 <div class="hero"><img src="img/hero.jpg" alt="TAL cafe &amp; restaurant" fetchpriority="high"></div>
@@ -117,7 +121,7 @@ body{letter-spacing:-.015em}
 </svg>
 </div>
   <div class="tag" id="tag"></div>
-  <div class="qrwrap"><picture class="eagles" aria-hidden="true"><source srcset="eagles-dark.png" media="(prefers-color-scheme: dark)"><img src="eagles.png" width="190" height="110" alt=""></picture><picture class="qr"><source srcset="qr-dark.png" media="(prefers-color-scheme: dark)"><img src="qr.png" width="92" height="92" alt="QR-код меню TAL"></picture></div>
+  <div class="qrrow"><i class="qrband l" aria-hidden="true"></i><div class="qrwrap"><picture class="eagles" aria-hidden="true"><source srcset="eagles-dark.png" media="(prefers-color-scheme: dark)"><img src="eagles.png" width="190" height="110" alt=""></picture><picture class="qr"><source srcset="qr-dark.png" media="(prefers-color-scheme: dark)"><img src="qr.png" width="92" height="92" alt="QR-код меню TAL"></picture></div><i class="qrband r" aria-hidden="true"></i></div>
 </header>
 <div class="bar">
   <div class="lang" role="group" aria-label="Тіл / Язык">
