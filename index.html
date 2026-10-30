@@ -121,10 +121,14 @@ main section+section::before{left:50%;right:auto;width:var(--ow,288px);transform
 .tag::before{content:"";position:absolute;z-index:-1;left:50%;top:0;width:min(100vw,440px);aspect-ratio:800/490;transform:translateX(-50%);background:url(img/yurt-art4.png) center/contain no-repeat;opacity:.3}
 header{gap:8px}
 header .tag{font-family:var(--sans);font-weight:400;font-size:17px;letter-spacing:-.015em}
+header{position:relative;z-index:11;background:var(--bg);box-shadow:0 0 0 100vw var(--bg);clip-path:inset(0 -100vw)}
+.hswallow{position:absolute;left:-14px;top:6px;width:130px;aspect-ratio:377/356;background:url(img/hswallow.png) center/contain no-repeat;pointer-events:none;z-index:0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .hswallow{background-image:url(img/hswallow-dark.png)}}
 </style>
 <div class="wrap">
 <div class="hero"><img src="img/hero.jpg" alt="TAL cafe &amp; restaurant" fetchpriority="high"></div>
 <header>
+  <i class="hswallow" aria-hidden="true"></i>
   <div class="logo" aria-label="TAL cafe &amp; restaurant"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"  viewBox="105 275 386 292">
 <path fill-rule="nonzero" fill="rgb(13.729858%, 12.159729%, 12.548828%)" fill-opacity="1" d="M 117.03125 550.195312 C 117.03125 543.386719 121.980469 538.734375 128.257812 538.734375 C 131.78125 538.734375 134.433594 540.296875 136.332031 542.65625 L 134.738281 543.683594 C 133.339844 541.757812 130.917969 540.460938 128.257812 540.460938 C 123.042969 540.460938 119.023438 544.414062 119.023438 550.195312 C 119.023438 555.910156 123.042969 559.929688 128.257812 559.929688 C 130.917969 559.929688 133.339844 558.632812 134.738281 556.707031 L 136.332031 557.703125 C 134.371094 560.128906 131.78125 561.65625 128.257812 561.65625 C 121.980469 561.65625 117.03125 557.003906 117.03125 550.195312 "/>
 <path fill-rule="nonzero" fill="rgb(13.729858%, 12.159729%, 12.548828%)" fill-opacity="1" d="M 151.429688 541.125 L 146.210938 554.082031 L 156.675781 554.082031 Z M 159.5 561.257812 L 157.304688 555.8125 L 145.578125 555.8125 L 143.386719 561.257812 L 141.199219 561.257812 L 150.265625 539.101562 L 152.621094 539.101562 L 161.691406 561.257812 Z M 159.5 561.257812 "/>
