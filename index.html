@@ -126,8 +126,7 @@ header{position:relative;z-index:11;background:var(--bg);box-shadow:0 0 0 100vw 
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .hswallow{background-image:url(img/hswallow-dark.png)}}
 .hswallow{z-index:2}
 header .tag{z-index:1}
-.fswallow{position:absolute;left:194px;top:439px;width:192px;height:196.5px;background:url(img/fswallow.png) center/100% 100% no-repeat;pointer-events:none;z-index:12;clip-path:inset(0 0 var(--fsb,0px) 0)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .fswallow{background-image:url(img/fswallow-dark.png)}}
+.lang{position:relative;background:var(--bg);box-shadow:0 0 0 100vw var(--bg);clip-path:inset(-36px -100vw -10px)}
 </style>
 <div class="wrap">
 <div class="hero"><img src="img/hero.jpg" alt="TAL cafe &amp; restaurant" fetchpriority="high"></div>
@@ -256,9 +255,4 @@ q.scrollIntoView({behavior:r?'auto':'smooth',block:'center'})});})();
 
 (function(){const T=18;function f(){const w=document.getElementById('menu').clientWidth+12;document.documentElement.style.setProperty('--ow',(Math.floor(w/T)*T)+'px')}
 f();addEventListener('resize',f);})();
-
-(function(){const e=document.createElement('i');e.className='fswallow';e.setAttribute('aria-hidden','true');document.body.appendChild(e);
-function f(){const hb=document.querySelector('header').getBoundingClientRect().bottom+scrollY;const r=e.getBoundingClientRect();const top=r.top+scrollY;
-e.style.setProperty('--fsb',Math.max(0,(top+r.height)-hb)+'px')}
-f();addEventListener('resize',f);addEventListener('load',f);})();
 </script>
