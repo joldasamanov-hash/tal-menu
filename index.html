@@ -182,4 +182,8 @@ render();
 (function(){const c=document.getElementById('chips');if(!c)return;
 const b=c.closest('.bar');function f(){b.classList.toggle('end',c.scrollLeft+c.clientWidth>=c.scrollWidth-4);b.style.setProperty('--ch',c.offsetHeight+'px')}
 c.addEventListener('scroll',f,{passive:true});addEventListener('resize',f);setTimeout(f,50);})();
+
+(function(){try{if('scrollRestoration' in history)history.scrollRestoration='manual'}catch(e){}
+function top(){if(!location.hash)window.scrollTo(0,0)}
+top();addEventListener('load',top);addEventListener('pageshow',top);})();
 </script>
