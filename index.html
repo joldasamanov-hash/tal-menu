@@ -111,6 +111,10 @@ footer .qrrow{margin:0 0 26px}
 .ds{font-size:13.5px;line-height:1.45}
 .pr{font-weight:500;font-size:15px}
 .tag{font-size:16px;line-height:1.55}
+.toqr{position:fixed;right:calc(max(16px,env(safe-area-inset-right,0px)) + 58px);bottom:calc(max(16px,env(safe-area-inset-bottom,0px)) + 8px);z-index:14;width:48px;height:48px;border-radius:50%;border:0;padding:0;background:#4a3b2c;color:#f2d79c;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 16px -4px rgba(40,28,16,.5);cursor:pointer;opacity:0;transform:translateY(12px);pointer-events:none;transition:opacity .2s,transform .2s}
+.toqr.show{opacity:1;transform:none;pointer-events:auto}
+.toqr svg{width:22px;height:22px}
+.toqr:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 </style>
 <div class="wrap">
 <div class="hero"><img src="img/hero.jpg" alt="TAL cafe &amp; restaurant" fetchpriority="high"></div>
@@ -155,6 +159,7 @@ footer .qrrow{margin:0 0 26px}
   <a href="https://www.instagram.com/tal.restaurant/" target="_blank" rel="noopener">instagram.com/tal.restaurant</a>
 </footer>
 </div>
+<button class="toqr" type="button" aria-label="К QR-коду"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM18 18h3v3M14 21h1M21 14v1" stroke-linecap="round"/></svg></button>
 <button class="totop" type="button" aria-label="Наверх"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
 <div id="lb" hidden><img alt=""></div>
 <script>
@@ -228,4 +233,10 @@ addEventListener('scroll',f,{passive:true});addEventListener('resize',f);f();})(
 function f(){b.classList.toggle('show',scrollY>innerHeight*1.2)}
 addEventListener('scroll',f,{passive:true});f();
 b.addEventListener('click',()=>{const r=matchMedia('(prefers-reduced-motion: reduce)').matches;window.scrollTo({top:0,behavior:r?'auto':'smooth'})});})();
+
+(function(){const b=document.querySelector('.toqr'),q=document.querySelector('footer .qrrow');if(!b||!q)return;let gone=false;
+function f(){const top=scrollY<innerHeight*0.5;if(top)gone=false;b.classList.toggle('show',top&&!gone)}
+addEventListener('scroll',f,{passive:true});f();
+b.addEventListener('click',()=>{gone=true;b.classList.remove('show');const r=matchMedia('(prefers-reduced-motion: reduce)').matches;
+q.scrollIntoView({behavior:r?'auto':'smooth',block:'center'})});})();
 </script>
