@@ -129,6 +129,11 @@ header .tag{z-index:1}
 .lang{position:relative;background:var(--bg);box-shadow:0 0 0 100vw var(--bg);clip-path:inset(-4px -100vw -10px)}
 header{padding-bottom:0}
 .bar{margin-top:0;padding-top:4px}
+main .rule{display:none}
+main h2{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:26px}
+main h2::before,main h2::after{content:"";flex:none;width:40px;height:18px;background:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2046%2020%22%20fill%3D%22none%22%20stroke%3D%22%239a7a3e%22%20stroke-width%3D%221.3%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M2%2010H25%22/%3E%3Cpath%20d%3D%22M25%2010c0-4.5%204.5-7%208.5-5.2s4.6%207.4.6%209-6.4-1.2-5-4%204.4-1.6%204.2.6%22/%3E%3Cpath%20d%3D%22M36%206.5l4-3.5M36%2013.5l4%203.5%22/%3E%3Ccircle%20cx%3D%2243%22%20cy%3D%2210%22%20r%3D%221.4%22%20fill%3D%22%239a7a3e%22%20stroke%3D%22none%22/%3E%3C/svg%3E") center/contain no-repeat;opacity:.85}
+main h2::before{transform:scaleX(-1)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) main h2::before,:root:not([data-theme="light"]) main h2::after{background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2046%2020%22%20fill%3D%22none%22%20stroke%3D%22%23c8a66a%22%20stroke-width%3D%221.3%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M2%2010H25%22/%3E%3Cpath%20d%3D%22M25%2010c0-4.5%204.5-7%208.5-5.2s4.6%207.4.6%209-6.4-1.2-5-4%204.4-1.6%204.2.6%22/%3E%3Cpath%20d%3D%22M36%206.5l4-3.5M36%2013.5l4%203.5%22/%3E%3Ccircle%20cx%3D%2243%22%20cy%3D%2210%22%20r%3D%221.4%22%20fill%3D%22%23c8a66a%22%20stroke%3D%22none%22/%3E%3C/svg%3E")}}
 </style>
 <div class="wrap">
 <div class="hero"><img src="img/hero.jpg" alt="TAL cafe &amp; restaurant" fetchpriority="high"></div>
