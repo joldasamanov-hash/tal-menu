@@ -144,6 +144,8 @@ header .tag{font-family:'Golos',system-ui,sans-serif;font-weight:500;font-size:1
 .qrrow .qr img{width:150px;height:150px}
 body,.tag,.nm,.ds,main p{letter-spacing:0}
 .pr{letter-spacing:.01em}
+.qrrow.qrframe{display:flex;justify-content:center;width:100%;margin:22px 0 6px}
+.qrrow.qrframe img{width:220px;height:auto;display:block}
 </style>
 <div class="wrap">
 <div class="hero"><img src="img/hero.webp" alt="TAL cafe &amp; restaurant" fetchpriority="high"></div>
@@ -183,10 +185,10 @@ body,.tag,.nm,.ds,main p{letter-spacing:0}
 </div>
 <main id="menu"></main>
 <footer>
-  <div class="qrrow"><i class="qrband l" aria-hidden="true"></i><div class="qrwrap"><picture class="qr"><source srcset="qr-dark.png" media="(prefers-color-scheme: dark)"><img src="qr.png" width="92" height="92" alt="QR-код меню TAL"></picture></div><i class="qrband r" aria-hidden="true"></i></div>
   <div id="allergy"></div>
   <div id="service"></div>
   <a href="https://www.instagram.com/tal.restaurant/" target="_blank" rel="noopener">instagram.com/tal.restaurant</a>
+  <div class="qrrow qrframe"><picture><source srcset="qrframe-dark.png" media="(prefers-color-scheme: dark)"><img src="qrframe.png" width="220" height="205" alt="QR-код меню TAL"></picture></div>
 </footer>
 </div>
 <button class="toqr" type="button" aria-label="К QR-коду"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM18 18h3v3M14 21h1M21 14v1" stroke-linecap="round"/></svg></button>
