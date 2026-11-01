@@ -144,6 +144,23 @@ header .tag{font-family:'Golos',system-ui,sans-serif;font-weight:500;font-size:1
 .qrrow .qr img{width:190px;height:190px}
 body,.tag,.nm,.ds,main p{letter-spacing:0}
 .pr{letter-spacing:.01em}
+/* taste review */
+.chips a,.lang button{font-family:'Golos',system-ui,'PingFang SC','Noto Sans SC',sans-serif;font-weight:500}
+.chips{margin:0;gap:6px;padding:6px 40px 6px 8px;box-shadow:none}
+.chips a{font-size:15.5px;padding:7px 12px;border-radius:999px;border-bottom:0}
+.chips a[aria-current="true"]{background:rgba(242,215,156,.16);color:#f2d79c}
+.bar::after{content:"\203A";right:0;width:36px;background:#4a3b2c;color:#f2d79c;font:500 24px/1 'Golos',sans-serif;display:flex;align-items:center;justify-content:center;padding-bottom:3px;box-sizing:border-box}
+.lang button{font-size:15px;letter-spacing:.06em;border-bottom-width:2px}
+.it{border-bottom:0;padding:20px 0 34px}
+footer{border-top:0}
+.tag{text-shadow:none}
+.ds{font-size:14.5px;line-height:1.5;color:color-mix(in srgb,var(--fg) 70%,var(--muted));margin-top:5px}
+.it .ph img{transition:transform .25s ease}
+.it .ph:active img{transform:scale(.985)}
+@media (prefers-reduced-motion:no-preference){
+html.anim .it,html.anim main h2{opacity:0;transform:translateY(22px);transition:opacity .55s ease,transform .6s cubic-bezier(.2,.7,.2,1)}
+html.anim .it.in,html.anim main h2.in{opacity:1;transform:none}
+}
 </style>
 <div class="wrap">
 <div class="hero"><img src="img/hero.webp" alt="TAL cafe &amp; restaurant" fetchpriority="high"></div>
@@ -219,8 +236,17 @@ function render(){
   });
   document.getElementById('chips').innerHTML=chips.join('');
   document.getElementById('menu').innerHTML=html.join('');
-  spy();
+  spy();reveal();
 }
+var rv;
+function reveal(){
+  if(!('IntersectionObserver' in window)||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  if(rv)rv.disconnect();
+  document.documentElement.classList.add('anim');
+  rv=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');rv.unobserve(e.target)}}),{rootMargin:'0px 0px -6% 0px',threshold:.08});
+  document.querySelectorAll('#menu .it,#menu h2').forEach(el=>rv.observe(el));
+}
+
 let io;
 function spy(){
   if(io)io.disconnect();
