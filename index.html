@@ -207,6 +207,10 @@ html,body{overflow-x:clip}
 .add.one button{font-size:22px}
 .add.on{background:#f2d79c;color:#3a2e22}
 .add.on button{font:600 15.5px/1 'Golos',system-ui,sans-serif;padding:0;font-variant-numeric:tabular-nums}
+.cart-cp{display:block;width:100%;margin-top:16px;height:48px;border:0;border-radius:999px;background:#4a3b2c;color:#f2ead8;font:500 16px/1 'Golos',system-ui,sans-serif;cursor:pointer}
+.cart-cp:active{transform:scale(.98)}
+.cart-ok{display:block;min-height:20px;margin-top:8px;text-align:center;color:var(--gold);font-size:14px;font-weight:500}
+.cart-ok+.cart-note{margin-top:2px}
 </style>
 <div class="wrap">
 <div class="hero"><img src="img/hero.webp" alt="TAL cafe &amp; restaurant" fetchpriority="high"></div>
@@ -320,10 +324,10 @@ lb.onclick=lbClose;
 document.addEventListener('keydown',e=>{if(lb.hidden)return;if(e.key==='Escape')lbClose();else if(e.key==='Tab'){e.preventDefault();lbx.focus()}});
 /* cart */
 var CART={};try{CART=JSON.parse(localStorage.getItem('tal-cart')||'{}')||{}}catch(e){CART={}}
-const CT={ru:['Корзина','Корзина пуста. Нажмите + у блюда.','Итого','Покажите список официанту.','Очистить','Добавить','Убрать одну','Добавить ещё','Закрыть'],
-kz:['Себет','Себет бос. Тағамның жанындағы + басыңыз.','Барлығы','Тізімді даяшыға көрсетіңіз.','Тазалау','Қосу','Біреуін алып тастау','Тағы қосу','Жабу'],
-en:['Cart','Your cart is empty. Tap + next to a dish.','Total','Show this list to your waiter.','Clear','Add','Remove one','Add one more','Close'],
-zh:['购物车','购物车为空。点击菜品旁的 +。','合计','请将此清单出示给服务员。','清空','添加','减少一份','再加一份','关闭']};
+const CT={ru:['Корзина','Корзина пуста. Нажмите + у блюда.','Итого','Покажите список официанту.','Очистить','Добавить','Убрать одну','Добавить ещё','Закрыть','Копировать список','Скопировано'],
+kz:['Себет','Себет бос. Тағамның жанындағы + басыңыз.','Барлығы','Тізімді даяшыға көрсетіңіз.','Тазалау','Қосу','Біреуін алып тастау','Тағы қосу','Жабу','Тізімді көшіру','Көшірілді'],
+en:['Cart','Your cart is empty. Tap + next to a dish.','Total','Show this list to your waiter.','Clear','Add','Remove one','Add one more','Close','Copy list','Copied'],
+zh:['购物车','购物车为空。点击菜品旁的 +。','合计','请将此清单出示给服务员。','清空','添加','减少一份','再加一份','关闭','复制清单','已复制']};
 function cSave(){try{localStorage.setItem('tal-cart',JSON.stringify(CART))}catch(e){}}
 function cItem(k){for(const s of DATA)for(const it of s.items)if(it.r===k)return it;return null}
 function cName(it){const K={ru:'r',kz:'k',en:'e',zh:'z'}[lang];return it[K]||it.r}
@@ -339,7 +343,9 @@ function cList(){const t=CT[lang],body=document.getElementById('cart-body');docu
   const ks=Object.keys(CART).filter(k=>CART[k]>0&&cItem(k));
   if(!ks.length){body.innerHTML=`<p class="cart-empty">${esc(t[1])}</p>`;return}
   let tot=0;const rows=ks.map(k=>{const it=cItem(k),q=CART[k],pr=cNum(it.p);tot+=pr*q;return `<li><span class="cn">${esc(cName(it))}</span><span class="cp">${pr?cFmt(pr*q):''}</span>${addH(k,false,true)}</li>`}).join('');
-  body.innerHTML=`<ul class="cart-list">${rows}</ul><div class="cart-tot"><span>${t[2]}</span><span>${cFmt(tot)}\u00a0\u20b8</span></div><p class="cart-note">${esc(t[3])}</p><button type="button" class="cart-clr">${esc(t[4])}</button>`}
+  body.innerHTML=`<ul class="cart-list">${rows}</ul><div class="cart-tot"><span>${t[2]}</span><span>${cFmt(tot)}\u00a0\u20b8</span></div><button type="button" class="cart-cp">${esc(t[9])}</button><span class="cart-ok" role="status"></span><p class="cart-note">${esc(t[3])}</p><button type="button" class="cart-clr">${esc(t[4])}</button>`}
+function cText(){const t=CT[lang];let tot=0;const L=Object.keys(CART).filter(k=>CART[k]>0&&cItem(k)).map(k=>{const it=cItem(k),q=CART[k],pr=cNum(it.p);tot+=pr*q;return cName(it)+' \u00d7 '+q+(pr?' \u2014 '+cFmt(pr*q)+' \u20b8':'')});return ('TAL\n'+L.join('\n')+'\n'+t[2]+': '+cFmt(tot)+' \u20b8').replace(/\u00a0/g,' ')}
+function cCopy(){const txt=cText(),ok=()=>{const o=document.querySelector('#cart .cart-ok');if(o){o.textContent=CT[lang][10];setTimeout(()=>{o.textContent=''},2200)}};const fb=()=>{const a=document.createElement('textarea');a.value=txt;a.setAttribute('readonly','');a.style.cssText='position:fixed;top:0;left:0;opacity:0';document.body.appendChild(a);a.select();a.setSelectionRange(0,txt.length);try{document.execCommand('copy');ok()}catch(e){}a.remove();document.querySelector('#cart .cart-cp')?.focus()};if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(txt).then(ok,fb);else fb()}
 function cSet(k,q){if(q>0)CART[k]=q;else delete CART[k];cSave();cBadge();
   document.querySelectorAll('#menu .add').forEach(el=>{if(el.dataset.k===k)el.outerHTML=addH(k,true)});
   if(!document.getElementById('cart').hidden)cList()}
@@ -351,7 +357,7 @@ let cFrom=null;const cBox=document.getElementById('cart');
 function cOpen(){cFrom=document.activeElement;cList();cBox.hidden=false;document.querySelector('.cart-x').focus()}
 function cClose(){if(cBox.hidden)return;cBox.hidden=true;if(cFrom&&cFrom.focus)cFrom.focus({preventScroll:true})}
 document.querySelector('.tocart').onclick=cOpen;
-cBox.addEventListener('click',e=>{if(e.target===cBox||e.target.closest('.cart-x'))cClose();else if(e.target.closest('.cart-clr')){CART={};cSave();cBadge();render();cList();document.querySelector('.cart-x').focus()}});
+cBox.addEventListener('click',e=>{if(e.target===cBox||e.target.closest('.cart-x'))cClose();else if(e.target.closest('.cart-cp'))cCopy();else if(e.target.closest('.cart-clr')){CART={};cSave();cBadge();render();cList();document.querySelector('.cart-x').focus()}});
 document.addEventListener('keydown',e=>{if(cBox.hidden)return;if(e.key==='Escape')cClose();else if(e.key==='Tab'){const f=[...cBox.querySelectorAll('button')];if(!f.length)return;const i=f.indexOf(document.activeElement);e.preventDefault();f[(i+(e.shiftKey?-1:1)+f.length)%f.length].focus()}});
 
 render();
