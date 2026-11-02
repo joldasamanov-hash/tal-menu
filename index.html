@@ -221,6 +221,9 @@ html,body{overflow-x:clip}
 .cart-dl[aria-pressed="true"]+span{color:var(--fg);font-weight:500}
 .cart-dl:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .it:not(:has(.ph)){padding:14px 0 18px}
+.cart-tots{margin:6px 0 4px;padding-top:12px;border-top:2px solid var(--fg);font-variant-numeric:tabular-nums}
+.cart-tots div{display:flex;justify-content:space-between;gap:12px;padding:3px 0;color:var(--muted);font-size:15px}
+.cart-tots .big{color:var(--fg);font-weight:500;font-size:17px}
 </style>
 <div class="wrap">
 <div class="hero"><img src="img/hero.webp" alt="TAL cafe &amp; restaurant" fetchpriority="high"></div>
@@ -334,10 +337,10 @@ lb.onclick=lbClose;
 document.addEventListener('keydown',e=>{if(lb.hidden)return;if(e.key==='Escape')lbClose();else if(e.key==='Tab'){e.preventDefault();lbx.focus()}});
 /* cart */
 var CART={};try{CART=JSON.parse(localStorage.getItem('tal-cart')||'{}')||{}}catch(e){CART={}}
-const CT={ru:['Корзина','Корзина пуста. Нажмите + у блюда.','Итого','Покажите список официанту.','Очистить','Добавить','Убрать одну','Добавить ещё','Закрыть','Отправить в WhatsApp','Скопировано','с обслуживанием 10%','Доставка','Вынос'],
-kz:['Себет','Себет бос. Тағамның жанындағы + басыңыз.','Барлығы','Тізімді даяшыға көрсетіңіз.','Тазалау','Қосу','Біреуін алып тастау','Тағы қосу','Жабу','WhatsApp-қа жіберу','Көшірілді','қызмет көрсетуімен 10%','Жеткізу','Алып кету'],
-en:['Cart','Your cart is empty. Tap + next to a dish.','Total','Show this list to your waiter.','Clear','Add','Remove one','Add one more','Close','Send via WhatsApp','Copied','incl. 10% service charge','Delivery','Takeaway'],
-zh:['购物车','购物车为空。点击菜品旁的 +。','合计','请将此清单出示给服务员。','清空','添加','减少一份','再加一份','关闭','通过 WhatsApp 发送','已复制','含10%服务费','外送','外带']};
+const CT={ru:['Корзина','Корзина пуста. Нажмите + у блюда.','Итого','Покажите список официанту.','Очистить','Добавить','Убрать одну','Добавить ещё','Закрыть','Отправить в WhatsApp','Скопировано','с обслуживанием 10%','Доставка','Вынос','Без обслуживания','С обслуживанием 10%'],
+kz:['Себет','Себет бос. Тағамның жанындағы + басыңыз.','Барлығы','Тізімді даяшыға көрсетіңіз.','Тазалау','Қосу','Біреуін алып тастау','Тағы қосу','Жабу','WhatsApp-қа жіберу','Көшірілді','қызмет көрсетуімен 10%','Жеткізу','Алып кету','Қызмет көрсетусіз','Қызмет көрсетумен 10%'],
+en:['Cart','Your cart is empty. Tap + next to a dish.','Total','Show this list to your waiter.','Clear','Add','Remove one','Add one more','Close','Send via WhatsApp','Copied','incl. 10% service charge','Delivery','Takeaway','Without service charge','With 10% service charge'],
+zh:['购物车','购物车为空。点击菜品旁的 +。','合计','请将此清单出示给服务员。','清空','添加','减少一份','再加一份','关闭','通过 WhatsApp 发送','已复制','含10%服务费','外送','外带','不含服务费','含10%服务费']};
 var CDL=false;try{CDL=localStorage.getItem('tal-dl')==='1'}catch(e){}
 function cTot(t){return CDL?t:Math.round(t*1.1)}
 const DLI='<svg viewBox="0 0 32 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7" cy="18" r="3.2"/><circle cx="25" cy="18" r="3.2"/><path d="M10.2 18h8.6l3-7h-5.5"/><path d="M21.8 11l3.2 7"/><path d="M19.5 6h3.2l-.9 5"/><rect x="3" y="7" width="8" height="7" rx="1.2"/><path d="M3.8 14L7 18"/></svg>';
@@ -357,7 +360,7 @@ function cList(){const t=CT[lang],body=document.getElementById('cart-body');docu
   const ks=Object.keys(CART).filter(k=>CART[k]>0&&cItem(k));
   if(!ks.length){body.innerHTML=`<p class="cart-empty">${esc(t[1])}</p>`;return}
   let tot=0;const rows=ks.map(k=>{const it=cItem(k),q=CART[k],pr=cNum(it.p);tot+=pr*q;return `<li><span class="cn">${esc(cName(it))}</span><span class="cp">${pr?cFmt(pr*q):''}</span>${addH(k,false,true)}</li>`}).join('');
-  body.innerHTML=`<ul class="cart-list">${rows}</ul><a class="cart-cp cart-wa" href="https://wa.me/77716551177?text=${esc(cText().replace(/%/g,'%25').replace(/&/g,'%26').replace(/#/g,'%23').replace(/\+/g,'%2B').replace(/\n/g,'%0A').replace(/ /g,'%20'))}" target="_blank" rel="noopener">${WAI}${esc(t[9])}</a><button type="button" class="cart-clr">${esc(t[4])}</button>`}
+  body.innerHTML=`<ul class="cart-list">${rows}</ul><div class="cart-tots"><div><span>${esc(t[14])}</span><span>${cFmt(tot)}\u00a0\u20b8</span></div><div class="big"><span>${esc(t[15])}</span><span>${cFmt(Math.round(tot*1.1))}\u00a0\u20b8</span></div></div><a class="cart-cp cart-wa" href="https://wa.me/77716551177?text=${esc(cText().replace(/%/g,'%25').replace(/&/g,'%26').replace(/#/g,'%23').replace(/\+/g,'%2B').replace(/\n/g,'%0A').replace(/ /g,'%20'))}" target="_blank" rel="noopener">${WAI}${esc(t[9])}</a><button type="button" class="cart-clr">${esc(t[4])}</button>`}
 function cPref(n,l){n=String(n).replace(/\s*\([^)]*\)\s*/g,' ').trim();if(l!=='ru'&&l!=='en')return [n];
   const re=l==='ru'?/(, | с | со | в | из | на | и | по-| – | — )/g:/(, | with | and | in | on | – | — )/g;
   const out=[];let m;while((m=re.exec(n))){const p=n.slice(0,m.index).trim();if(p.length>=4&&!/^(салат|лагман|овощи|рулеты|суп|кофе|чай|salad|lagman|soup|coffee|tea)$/i.test(p))out.push(p)}out.push(n);return out}
