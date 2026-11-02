@@ -330,10 +330,10 @@ lb.onclick=lbClose;
 document.addEventListener('keydown',e=>{if(lb.hidden)return;if(e.key==='Escape')lbClose();else if(e.key==='Tab'){e.preventDefault();lbx.focus()}});
 /* cart */
 var CART={};try{CART=JSON.parse(localStorage.getItem('tal-cart')||'{}')||{}}catch(e){CART={}}
-const CT={ru:['Корзина','Корзина пуста. Нажмите + у блюда.','Итого','Покажите список официанту.','Очистить','Добавить','Убрать одну','Добавить ещё','Закрыть','Копировать список','Скопировано','с обслуживанием 10%','Доставка','Вынос или доставка'],
-kz:['Себет','Себет бос. Тағамның жанындағы + басыңыз.','Барлығы','Тізімді даяшыға көрсетіңіз.','Тазалау','Қосу','Біреуін алып тастау','Тағы қосу','Жабу','Тізімді көшіру','Көшірілді','қызмет көрсетуімен 10%','Жеткізу','Алып кету немесе жеткізу'],
-en:['Cart','Your cart is empty. Tap + next to a dish.','Total','Show this list to your waiter.','Clear','Add','Remove one','Add one more','Close','Copy list','Copied','incl. 10% service charge','Delivery','Takeaway or delivery'],
-zh:['购物车','购物车为空。点击菜品旁的 +。','合计','请将此清单出示给服务员。','清空','添加','减少一份','再加一份','关闭','复制清单','已复制','含10%服务费','外送','外带或外送']};
+const CT={ru:['Корзина','Корзина пуста. Нажмите + у блюда.','Итого','Покажите список официанту.','Очистить','Добавить','Убрать одну','Добавить ещё','Закрыть','Копировать список','Скопировано','с обслуживанием 10%','Доставка','Вынос'],
+kz:['Себет','Себет бос. Тағамның жанындағы + басыңыз.','Барлығы','Тізімді даяшыға көрсетіңіз.','Тазалау','Қосу','Біреуін алып тастау','Тағы қосу','Жабу','Тізімді көшіру','Көшірілді','қызмет көрсетуімен 10%','Жеткізу','Алып кету'],
+en:['Cart','Your cart is empty. Tap + next to a dish.','Total','Show this list to your waiter.','Clear','Add','Remove one','Add one more','Close','Copy list','Copied','incl. 10% service charge','Delivery','Takeaway'],
+zh:['购物车','购物车为空。点击菜品旁的 +。','合计','请将此清单出示给服务员。','清空','添加','减少一份','再加一份','关闭','复制清单','已复制','含10%服务费','外送','外带']};
 var CDL=false;try{CDL=localStorage.getItem('tal-dl')==='1'}catch(e){}
 function cTot(t){return CDL?t:Math.round(t*1.1)}
 const DLI='<svg viewBox="0 0 32 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7" cy="18" r="3.2"/><circle cx="25" cy="18" r="3.2"/><path d="M10.2 18h8.6l3-7h-5.5"/><path d="M21.8 11l3.2 7"/><path d="M19.5 6h3.2l-.9 5"/><rect x="3" y="7" width="8" height="7" rx="1.2"/><path d="M3.8 14L7 18"/></svg>';
