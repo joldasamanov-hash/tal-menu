@@ -204,6 +204,9 @@ html,body{overflow-x:clip}
 .cart-note,.cart-empty{color:var(--muted);font-size:14px;margin:12px 0 0}
 .cart-empty{margin:8px 0 10px;font-size:15.5px}
 .cart-clr{margin-top:14px;border:0;background:none;color:var(--muted);font:inherit;font-size:14px;text-decoration:underline;text-underline-offset:3px;padding:10px 0;cursor:pointer}
+.add.one button{font-size:22px}
+.add.on{background:#f2d79c;color:#3a2e22}
+.add.on button{font:600 15.5px/1 'Golos',system-ui,sans-serif;padding:0;font-variant-numeric:tabular-nums}
 </style>
 <div class="wrap">
 <div class="hero"><img src="img/hero.webp" alt="TAL cafe &amp; restaurant" fetchpriority="high"></div>
@@ -326,7 +329,8 @@ function cItem(k){for(const s of DATA)for(const it of s.items)if(it.r===k)return
 function cName(it){const K={ru:'r',kz:'k',en:'e',zh:'z'}[lang];return it[K]||it.r}
 function cNum(p){const d=String(p||'').replace(/\D/g,'');return d?+d:0}
 function cFmt(n){return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,'\u00a0')}
-function addH(k,anim){const q=CART[k]||0,t=CT[lang],n=esc(k);
+function addH(k,anim,step){const q=CART[k]||0,t=CT[lang],n=esc(k);
+  if(!step)return `<span class="add one${q?' on':''}${anim?' st':''}" data-k="${n}"><button type="button" class="c-p" aria-label="${q?t[7]+' ('+q+')':t[5]}">${q||'+'}</button></span>`;
   if(!q)return `<span class="add" data-k="${n}"><button type="button" class="c-p" aria-label="${t[5]}">+</button></span>`;
   return `<span class="add${anim?' st':''}" data-k="${n}"><button type="button" class="c-m" aria-label="${t[6]}">\u2212</button><b aria-live="polite">${q}</b><button type="button" class="c-p" aria-label="${t[7]}">+</button></span>`}
 function cCount(){return Object.values(CART).reduce((a,b)=>a+b,0)}
@@ -334,7 +338,7 @@ function cBadge(){const b=document.querySelector('.tocart');if(!b)return;const n
 function cList(){const t=CT[lang],body=document.getElementById('cart-body');document.getElementById('cart-h').textContent=t[0];document.querySelector('.cart-x').setAttribute('aria-label',t[8]);
   const ks=Object.keys(CART).filter(k=>CART[k]>0&&cItem(k));
   if(!ks.length){body.innerHTML=`<p class="cart-empty">${esc(t[1])}</p>`;return}
-  let tot=0;const rows=ks.map(k=>{const it=cItem(k),q=CART[k],pr=cNum(it.p);tot+=pr*q;return `<li><span class="cn">${esc(cName(it))}</span><span class="cp">${pr?cFmt(pr*q):''}</span>${addH(k)}</li>`}).join('');
+  let tot=0;const rows=ks.map(k=>{const it=cItem(k),q=CART[k],pr=cNum(it.p);tot+=pr*q;return `<li><span class="cn">${esc(cName(it))}</span><span class="cp">${pr?cFmt(pr*q):''}</span>${addH(k,false,true)}</li>`}).join('');
   body.innerHTML=`<ul class="cart-list">${rows}</ul><div class="cart-tot"><span>${t[2]}</span><span>${cFmt(tot)}\u00a0\u20b8</span></div><p class="cart-note">${esc(t[3])}</p><button type="button" class="cart-clr">${esc(t[4])}</button>`}
 function cSet(k,q){if(q>0)CART[k]=q;else delete CART[k];cSave();cBadge();
   document.querySelectorAll('#menu .add').forEach(el=>{if(el.dataset.k===k)el.outerHTML=addH(k,true)});
