@@ -209,6 +209,9 @@ html,body{overflow-x:clip}
 .add.on button{font:600 15.5px/1 'Golos',system-ui,sans-serif;padding:0;font-variant-numeric:tabular-nums}
 .cart-cp{display:block;width:100%;margin-top:16px;height:48px;border:0;border-radius:999px;background:#4a3b2c;color:#f2ead8;font:500 16px/1 'Golos',system-ui,sans-serif;cursor:pointer}
 .cart-cp:active{transform:scale(.98)}
+.cart-wa{display:flex;align-items:center;justify-content:center;gap:10px;text-decoration:none;box-sizing:border-box;margin-bottom:6px}
+.cart-wa svg{width:22px;height:22px}
+.cart-wa:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 .cart-ok{display:block;min-height:20px;margin-top:8px;text-align:center;color:var(--gold);font-size:14px;font-weight:500}
 .cart-ok+.cart-note{margin-top:2px}
 .cart-svc{margin-top:10px;padding-top:12px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:flex-start;gap:12px;font-size:15px;color:var(--muted);font-size:13.5px;font-variant-numeric:tabular-nums}
@@ -330,13 +333,14 @@ lb.onclick=lbClose;
 document.addEventListener('keydown',e=>{if(lb.hidden)return;if(e.key==='Escape')lbClose();else if(e.key==='Tab'){e.preventDefault();lbx.focus()}});
 /* cart */
 var CART={};try{CART=JSON.parse(localStorage.getItem('tal-cart')||'{}')||{}}catch(e){CART={}}
-const CT={ru:['Корзина','Корзина пуста. Нажмите + у блюда.','Итого','Покажите список официанту.','Очистить','Добавить','Убрать одну','Добавить ещё','Закрыть','Копировать список','Скопировано','с обслуживанием 10%','Доставка','Вынос'],
-kz:['Себет','Себет бос. Тағамның жанындағы + басыңыз.','Барлығы','Тізімді даяшыға көрсетіңіз.','Тазалау','Қосу','Біреуін алып тастау','Тағы қосу','Жабу','Тізімді көшіру','Көшірілді','қызмет көрсетуімен 10%','Жеткізу','Алып кету'],
-en:['Cart','Your cart is empty. Tap + next to a dish.','Total','Show this list to your waiter.','Clear','Add','Remove one','Add one more','Close','Copy list','Copied','incl. 10% service charge','Delivery','Takeaway'],
-zh:['购物车','购物车为空。点击菜品旁的 +。','合计','请将此清单出示给服务员。','清空','添加','减少一份','再加一份','关闭','复制清单','已复制','含10%服务费','外送','外带']};
+const CT={ru:['Корзина','Корзина пуста. Нажмите + у блюда.','Итого','Покажите список официанту.','Очистить','Добавить','Убрать одну','Добавить ещё','Закрыть','Отправить в WhatsApp','Скопировано','с обслуживанием 10%','Доставка','Вынос'],
+kz:['Себет','Себет бос. Тағамның жанындағы + басыңыз.','Барлығы','Тізімді даяшыға көрсетіңіз.','Тазалау','Қосу','Біреуін алып тастау','Тағы қосу','Жабу','WhatsApp-қа жіберу','Көшірілді','қызмет көрсетуімен 10%','Жеткізу','Алып кету'],
+en:['Cart','Your cart is empty. Tap + next to a dish.','Total','Show this list to your waiter.','Clear','Add','Remove one','Add one more','Close','Send via WhatsApp','Copied','incl. 10% service charge','Delivery','Takeaway'],
+zh:['购物车','购物车为空。点击菜品旁的 +。','合计','请将此清单出示给服务员。','清空','添加','减少一份','再加一份','关闭','通过 WhatsApp 发送','已复制','含10%服务费','外送','外带']};
 var CDL=false;try{CDL=localStorage.getItem('tal-dl')==='1'}catch(e){}
 function cTot(t){return CDL?t:Math.round(t*1.1)}
 const DLI='<svg viewBox="0 0 32 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7" cy="18" r="3.2"/><circle cx="25" cy="18" r="3.2"/><path d="M10.2 18h8.6l3-7h-5.5"/><path d="M21.8 11l3.2 7"/><path d="M19.5 6h3.2l-.9 5"/><rect x="3" y="7" width="8" height="7" rx="1.2"/><path d="M3.8 14L7 18"/></svg>';
+const WAI='<svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M12 2.2a9.7 9.7 0 0 0-8.3 14.8L2.4 21.6l4.7-1.2A9.7 9.7 0 1 0 12 2.2zm0 17.7a8 8 0 0 1-4.1-1.1l-.3-.2-2.8.7.8-2.7-.2-.3A8 8 0 1 1 12 19.9zm4.4-6c-.2-.1-1.4-.7-1.6-.8-.2-.1-.4-.1-.5.1l-.7.9c-.1.2-.3.2-.5.1a6.6 6.6 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.7-1.7c-.2-.4-.4-.4-.5-.4h-.5a.9.9 0 0 0-.7.3 2.8 2.8 0 0 0-.9 2.1c0 1.2.9 2.4 1 2.6.1.2 1.8 2.7 4.3 3.8 1.6.7 2.2.7 3 .6.5-.1 1.4-.6 1.6-1.2.2-.6.2-1.1.1-1.2l-.4-.3z"/></svg>';
 function cSave(){try{localStorage.setItem('tal-cart',JSON.stringify(CART))}catch(e){}}
 function cItem(k){for(const s of DATA)for(const it of s.items)if(it.r===k)return it;return null}
 function cName(it){const K={ru:'r',kz:'k',en:'e',zh:'z'}[lang];return it[K]||it.r}
@@ -352,7 +356,7 @@ function cList(){const t=CT[lang],body=document.getElementById('cart-body');docu
   const ks=Object.keys(CART).filter(k=>CART[k]>0&&cItem(k));
   if(!ks.length){body.innerHTML=`<p class="cart-empty">${esc(t[1])}</p>`;return}
   let tot=0;const rows=ks.map(k=>{const it=cItem(k),q=CART[k],pr=cNum(it.p);tot+=pr*q;return `<li><span class="cn">${esc(cName(it))}</span><span class="cp">${pr?cFmt(pr*q):''}</span>${addH(k,false,true)}</li>`}).join('');
-  body.innerHTML=`<ul class="cart-list">${rows}</ul><div class="cart-svc"><button type="button" class="cart-dl" aria-pressed="${CDL}" aria-label="${esc(t[13])}">${DLI}</button><span>${esc(t[13])}</span></div><button type="button" class="cart-cp">${esc(t[9])}</button><span class="cart-ok" role="status"></span><p class="cart-note">${esc(t[3])}</p><button type="button" class="cart-clr">${esc(t[4])}</button>`}
+  body.innerHTML=`<ul class="cart-list">${rows}</ul><div class="cart-svc"><button type="button" class="cart-dl" aria-pressed="${CDL}" aria-label="${esc(t[13])}">${DLI}</button><span>${esc(t[13])}</span></div><a class="cart-cp cart-wa" href="https://wa.me/77716551177?text=${encodeURIComponent(cText())}" target="_blank" rel="noopener">${WAI}${esc(t[9])}</a><button type="button" class="cart-clr">${esc(t[4])}</button>`}
 function cPref(n,l){n=String(n).replace(/\s*\([^)]*\)\s*/g,' ').trim();if(l!=='ru'&&l!=='en')return [n];
   const re=l==='ru'?/(,| с | со | в | из | на | и | по-| – | — )/g:/(,| with | and | in | on | – | — )/g;
   const out=[];let m;while((m=re.exec(n))){const p=n.slice(0,m.index).trim();if(p.length>=4&&!/^(салат|лагман|овощи|рулеты|суп|salad|lagman|soup)$/i.test(p))out.push(p)}out.push(n);return out}
@@ -377,7 +381,7 @@ let cFrom=null;const cBox=document.getElementById('cart');
 function cOpen(){cFrom=document.activeElement;cList();cBox.hidden=false;document.querySelector('.cart-x').focus()}
 function cClose(){if(cBox.hidden)return;cBox.hidden=true;if(cFrom&&cFrom.focus)cFrom.focus({preventScroll:true})}
 document.querySelector('.tocart').onclick=cOpen;
-cBox.addEventListener('click',e=>{if(e.target===cBox||e.target.closest('.cart-x'))cClose();else if(e.target.closest('.cart-dl')){CDL=!CDL;try{localStorage.setItem('tal-dl',CDL?'1':'')}catch(_){}cList();document.querySelector('#cart .cart-dl')?.focus()}else if(e.target.closest('.cart-cp'))cCopy();else if(e.target.closest('.cart-clr')){CART={};cSave();cBadge();render();cList();document.querySelector('.cart-x').focus()}});
+cBox.addEventListener('click',e=>{if(e.target===cBox||e.target.closest('.cart-x'))cClose();else if(e.target.closest('.cart-dl')){CDL=!CDL;try{localStorage.setItem('tal-dl',CDL?'1':'')}catch(_){}cList();document.querySelector('#cart .cart-dl')?.focus()}else if(e.target.closest('.cart-clr')){CART={};cSave();cBadge();render();cList();document.querySelector('.cart-x').focus()}});
 document.addEventListener('keydown',e=>{if(cBox.hidden)return;if(e.key==='Escape')cClose();else if(e.key==='Tab'){const f=[...cBox.querySelectorAll('button')];if(!f.length)return;const i=f.indexOf(document.activeElement);e.preventDefault();f[(i+(e.shiftKey?-1:1)+f.length)%f.length].focus()}});
 
 render();
