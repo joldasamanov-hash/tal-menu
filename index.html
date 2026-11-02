@@ -194,7 +194,7 @@ html,body{overflow-x:clip}
 .cart-sheet{position:relative;width:100%;max-width:560px;max-height:82dvh;overflow:auto;overscroll-behavior:contain;background:var(--bg);color:var(--fg);border-radius:20px 20px 0 0;padding:18px max(20px,env(safe-area-inset-left,0px)) calc(20px + env(safe-area-inset-bottom,0px));box-sizing:border-box;font-family:'Golos',system-ui,sans-serif}
 .cart-sheet h3{margin:4px 44px 14px 0;font:500 22px/1.2 'Golos',system-ui,sans-serif}
 .cart-x{position:absolute;top:12px;right:12px;width:44px;height:44px;border:0;border-radius:50%;background:rgba(74,59,44,.1);color:var(--fg);font:400 26px/1 'Golos',sans-serif;cursor:pointer;padding:0 0 3px}
-.cart-list{list-style:none;margin:0;padding:0}
+.cart-list{list-style:none;margin:0 0 4px;padding:0}
 .cart-list li{display:flex;align-items:center;gap:12px;padding:12px 0}
 .cart-list li+li{border-top:1px solid var(--line)}
 .cart-list .cn{flex:1;min-width:0;font-size:15.5px;line-height:1.35;overflow-wrap:anywhere}
@@ -351,7 +351,7 @@ function cList(){const t=CT[lang],body=document.getElementById('cart-body');docu
   const ks=Object.keys(CART).filter(k=>CART[k]>0&&cItem(k));
   if(!ks.length){body.innerHTML=`<p class="cart-empty">${esc(t[1])}</p>`;return}
   let tot=0;const rows=ks.map(k=>{const it=cItem(k),q=CART[k],pr=cNum(it.p);tot+=pr*q;return `<li><span class="cn">${esc(cName(it))}</span><span class="cp">${pr?cFmt(pr*q):''}</span>${addH(k,false,true)}</li>`}).join('');
-  body.innerHTML=`<ul class="cart-list">${rows}</ul><div class="cart-tot"><span>${t[2]}</span><span>${cFmt(cTot(tot))}\u00a0\u20b8</span></div><div class="cart-svc"><button type="button" class="cart-dl" aria-pressed="${CDL}" aria-label="${esc(t[12])}">${DLI}</button><span>${esc(CDL?t[13]:t[11])}</span></div><button type="button" class="cart-cp">${esc(t[9])}</button><span class="cart-ok" role="status"></span><p class="cart-note">${esc(t[3])}</p><button type="button" class="cart-clr">${esc(t[4])}</button>`}
+  body.innerHTML=`<ul class="cart-list">${rows}</ul><button type="button" class="cart-cp">${esc(t[9])}</button><span class="cart-ok" role="status"></span><p class="cart-note">${esc(t[3])}</p><button type="button" class="cart-clr">${esc(t[4])}</button>`}
 function cPref(n,l){n=String(n).replace(/\s*\([^)]*\)\s*/g,' ').trim();if(l!=='ru'&&l!=='en')return [n];
   const re=l==='ru'?/(,| с | со | в | из | на | и | по-| – | — )/g:/(,| with | and | in | on | – | — )/g;
   const out=[];let m;while((m=re.exec(n))){const p=n.slice(0,m.index).trim();if(p.length>=4&&!/^(салат|лагман|овощи|рулеты|суп|salad|lagman|soup)$/i.test(p))out.push(p)}out.push(n);return out}
@@ -363,7 +363,7 @@ function cShortAll(){if(SHORTL===lang)return;SHORTL=lang;SHORT={};const K={ru:'r
   its.forEach(o=>SHORT[o.k]=o.P[o.i])}
 const SHFIX={ru:{'Греческий салат классический':'Греческий'}};
 function cShort(k){cShortAll();return (SHFIX[lang]&&SHFIX[lang][k])||SHORT[k]||k}
-function cText(){const t=CT[lang];let tot=0;const L=Object.keys(CART).filter(k=>CART[k]>0&&cItem(k)).map((k,i)=>{const it=cItem(k),q=CART[k],pr=cNum(it.p);tot+=pr*q;return (i+1)+'. '+cShort(k)+(q>1?' \u00d7'+q:'')+(pr?' \u2014 '+cFmt(pr*q):'')});return ('*TAL*\n'+L.join('\n')+'\n\n*'+t[2]+': '+cFmt(cTot(tot))+' \u20b8*\n'+(CDL?t[13]:t[11])).replace(/\u00a0/g,' ')}
+function cText(){const t=CT[lang];let tot=0;const L=Object.keys(CART).filter(k=>CART[k]>0&&cItem(k)).map((k,i)=>{const it=cItem(k),q=CART[k],pr=cNum(it.p);tot+=pr*q;return (i+1)+'. '+cShort(k)+(q>1?' \u00d7'+q:'')+(pr?' \u2014 '+cFmt(pr*q):'')});return ('*TAL*\n'+L.join('\n')).replace(/\u00a0/g,' ')}
 function cCopy(){const txt=cText(),ok=()=>{const o=document.querySelector('#cart .cart-ok');if(o){o.textContent=CT[lang][10];setTimeout(()=>{o.textContent=''},2200)}};const fb=()=>{const a=document.createElement('textarea');a.value=txt;a.setAttribute('readonly','');a.style.cssText='position:fixed;top:0;left:0;opacity:0';document.body.appendChild(a);a.select();a.setSelectionRange(0,txt.length);try{document.execCommand('copy');ok()}catch(e){}a.remove();document.querySelector('#cart .cart-cp')?.focus()};if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(txt).then(ok,fb);else fb()}
 function cSet(k,q){if(q>0)CART[k]=q;else delete CART[k];cSave();cBadge();
   document.querySelectorAll('#menu .add').forEach(el=>{if(el.dataset.k===k)el.outerHTML=addH(k,true)});
