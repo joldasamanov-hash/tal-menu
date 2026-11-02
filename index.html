@@ -361,7 +361,8 @@ function cShortAll(){if(SHORTL===lang)return;SHORTL=lang;SHORT={};const K={ru:'r
   for(let g=0;g<8;g++){const c={};its.forEach(o=>{const v=o.P[o.i].toLowerCase();(c[v]=c[v]||[]).push(o)});let ch=false;
     Object.values(c).forEach(a=>{if(a.length>1)a.forEach(o=>{if(o.i<o.P.length-1){o.i++;ch=true}})});if(!ch)break}
   its.forEach(o=>SHORT[o.k]=o.P[o.i])}
-function cShort(k){cShortAll();return SHORT[k]||k}
+const SHFIX={ru:{'Греческий салат классический':'Греческий'}};
+function cShort(k){cShortAll();return (SHFIX[lang]&&SHFIX[lang][k])||SHORT[k]||k}
 function cText(){const t=CT[lang];let tot=0;const L=Object.keys(CART).filter(k=>CART[k]>0&&cItem(k)).map((k,i)=>{const it=cItem(k),q=CART[k],pr=cNum(it.p);tot+=pr*q;return (i+1)+'. '+cShort(k)+(q>1?' \u00d7'+q:'')+(pr?' \u2014 '+cFmt(pr*q):'')});return ('*TAL*\n'+L.join('\n')+'\n\n*'+t[2]+': '+cFmt(cTot(tot))+' \u20b8*\n'+(CDL?t[13]:t[11])).replace(/\u00a0/g,' ')}
 function cCopy(){const txt=cText(),ok=()=>{const o=document.querySelector('#cart .cart-ok');if(o){o.textContent=CT[lang][10];setTimeout(()=>{o.textContent=''},2200)}};const fb=()=>{const a=document.createElement('textarea');a.value=txt;a.setAttribute('readonly','');a.style.cssText='position:fixed;top:0;left:0;opacity:0';document.body.appendChild(a);a.select();a.setSelectionRange(0,txt.length);try{document.execCommand('copy');ok()}catch(e){}a.remove();document.querySelector('#cart .cart-cp')?.focus()};if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(txt).then(ok,fb);else fb()}
 function cSet(k,q){if(q>0)CART[k]=q;else delete CART[k];cSave();cBadge();
