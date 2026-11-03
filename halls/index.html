@@ -299,13 +299,14 @@ const card = (h, sec) => `
   </article>`;
 
 const ROMAN = {1:"I", 2:"II"};
+const secsOf = f => SECTIONS.filter(s => HALLS.some(h => h.floor===f && h.type===s.type));
 const count = f => HALLS.filter(h=>h.floor===f).length;
 
 document.getElementById("floors").innerHTML =
   `<div class="floor-list" id="floor-list">${[1,2].map(f=>`
     <button class="fcard" data-open="${f}" aria-label="Открыть ${f} этаж">
       <img src="${FLOOR_COVERS[f]}" alt="${f} этаж ресторана TAL">
-      <div class="fcard-t"><h3><em>${ROMAN[f]}</em> этаж</h3><p>VIP-залы · Общий зал · Диванчики</p></div>
+      <div class="fcard-t"><h3><em>${ROMAN[f]}</em> этаж</h3><p>${secsOf(f).map(x=>x.title).join(" · ")}</p></div>
       <span class="fcard-go">→</span>
     </button>`).join("")}</div>` +
   [1,2].map(f => {
@@ -313,8 +314,8 @@ document.getElementById("floors").innerHTML =
   return `<div class="floor" data-floor="${f}" hidden>
     <button class="back" data-back>← Все этажи</button>
     <div class="cover"><img src="${FLOOR_COVERS[f]}" alt="${f} этаж ресторана TAL"><div class="cover-t"><h3>${ROMAN[f]} этаж</h3></div></div>
-    <nav class="chips">${SECTIONS.map(s=>`<a class="chip" href="#f${f}-${s.type}">${s.title} <b>${inFloor.filter(h=>h.type===s.type).length}</b></a>`).join("")}</nav>
-    ${SECTIONS.map(s => {
+    <nav class="chips">${secsOf(f).map(s=>`<a class="chip" href="#f${f}-${s.type}">${s.title} <b>${inFloor.filter(h=>h.type===s.type).length}</b></a>`).join("")}</nav>
+    ${secsOf(f).map(s => {
       const list = inFloor.filter(h => h.type === s.type);
       return `<section class="sec" id="f${f}-${s.type}">
         <div class="sec-h"><h3>${s.title}</h3><span>${ROMAN[f]} этаж</span></div>
