@@ -224,13 +224,27 @@ html,body{overflow-x:clip}
 .cart-tots{margin:6px 0 4px;padding-top:12px;border-top:2px solid var(--fg);font-variant-numeric:tabular-nums}
 .cart-tots div{display:flex;justify-content:space-between;gap:12px;padding:3px 0;color:var(--muted);font-size:15px}
 .cart-tots .big{color:var(--fg);font-weight:500;font-size:17px}
-.halls-btn{position:relative;z-index:11;display:flex;align-items:center;justify-content:center;gap:10px;width:100%;max-width:440px;box-sizing:border-box;margin:14px auto 6px;padding:16px 20px;border-radius:14px;background:#4a3b2c;color:#f2d79c;font-family:'Golos',system-ui,sans-serif;font-weight:500;font-size:16px;letter-spacing:.01em;text-decoration:none;box-shadow:0 8px 18px -6px rgba(40,28,16,.45);transition:transform .15s ease}
-.halls-btn svg{width:20px;height:20px;flex:none}
-.halls-btn:active{transform:scale(.98)}
+.halls-btn{position:relative;z-index:11;display:inline-flex;align-items:center;justify-content:center;gap:9px;margin:2px auto 22px;padding:12px 22px;border-radius:999px;border:1px solid var(--gold);background:var(--bg);color:var(--fg);font-family:'Golos',system-ui,sans-serif;font-weight:500;font-size:15.5px;text-decoration:none;transition:background .2s,color .2s}
+.halls-btn svg{width:19px;height:19px;flex:none;color:var(--gold)}
+.halls-btn:active{background:#4a3b2c;color:#f2d79c}
+.halls-btn:active svg{color:#f2d79c}
 .halls-btn:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+/* язык — поверх фото, сверху */
+.hero .lang{position:absolute;z-index:3;top:calc(env(safe-area-inset-top,0px) + 8px);right:10px;left:auto;margin:0;gap:6px;background:none;box-shadow:none;clip-path:none;flex-wrap:nowrap}
+.hero .lang button{color:rgba(255,255,255,.82);font-size:13px;padding:7px 5px 5px;text-shadow:0 1px 6px rgba(0,0,0,.55);border-bottom-color:transparent}
+.hero .lang button[aria-pressed="true"]{color:#fff;border-bottom-color:#f2d79c}
+.hero::before{content:"";position:absolute;inset:0 0 auto 0;height:64px;z-index:2;background:linear-gradient(rgba(0,0,0,.35),rgba(0,0,0,0));pointer-events:none}
+.bar{padding-top:6px}
 </style>
 <div class="wrap">
-<div class="hero"><img src="img/hero.webp" alt="TAL cafe &amp; restaurant" fetchpriority="high"></div>
+<div class="hero"><img src="img/hero.webp" alt="TAL cafe &amp; restaurant" fetchpriority="high">
+  <div class="lang" role="group" aria-label="Тіл / Язык">
+    <button id="b-kz" type="button" aria-pressed="false">ҚАЗ</button>
+    <button id="b-ru" type="button" aria-pressed="true">РУС</button>
+    <button id="b-en" type="button" aria-pressed="false">ENG</button>
+    <button id="b-zh" type="button" aria-pressed="false">中文</button>
+  </div>
+</div>
 <header>
 <h1 class="vh" id="h1">TAL — Горное меню</h1>
   <i class="hswallow" aria-hidden="true"></i>
@@ -256,15 +270,9 @@ html,body{overflow-x:clip}
 </svg>
 </div>
   <div class="tag" id="tag"></div>
-  <a class="halls-btn" id="halls-btn" href="halls/"><span id="halls-txt">Посмотреть залы</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+  <a class="halls-btn" id="halls-btn" href="halls/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V4h7v16M13 4h7v16h-7"/><path d="M9 12h.01M15 12h.01" stroke-linecap="round" stroke-width="2.2"/><path d="M2 20h20"/></svg><span id="halls-txt">Посмотреть залы</span></a>
 </header>
 <div class="bar">
-  <div class="lang" role="group" aria-label="Тіл / Язык">
-    <button id="b-kz" type="button" aria-pressed="false">ҚАЗ</button>
-    <button id="b-ru" type="button" aria-pressed="true">РУС</button>
-    <button id="b-en" type="button" aria-pressed="false">ENG</button>
-    <button id="b-zh" type="button" aria-pressed="false">中文</button>
-  </div>
   <nav class="chips" id="chips" aria-label="Разделы"></nav>
 </div>
 <main id="menu"></main>
