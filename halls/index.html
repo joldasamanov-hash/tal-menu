@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TAL — Залы ресторана</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f6efe5; --card:#fffaf3; --ink:#2f3a2a; --olive:#4f5b3a; --muted:#8a8172;
+    --line:#e6dccd; --accent:#b08a5a; --vip:#4f5b3a;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ink);font-family:"Manrope",system-ui,sans-serif;font-weight:400;line-height:1.55;-webkit-font-smoothing:antialiased}
+  .serif{font-family:"Cormorant Garamond",Georgia,serif}
+  img{display:block;max-width:100%}
+
+  /* Hero */
+  .hero{position:relative;min-height:88vh;display:flex;align-items:flex-end;color:#fff;overflow:hidden}
+  .hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scale(1.03)}
+  .hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(30,26,20,.15) 0%,rgba(30,26,20,.05) 40%,rgba(30,26,20,.7) 100%)}
+  .hero-inner{position:relative;z-index:1;padding:28px 22px 40px;max-width:1100px;margin:0 auto;width:100%}
+  .brand{position:absolute;top:22px;left:22px;z-index:2;font-family:"Cormorant Garamond",serif;font-size:30px;letter-spacing:.32em;font-weight:500;color:#fff}
+  .eyebrow{font-size:11px;letter-spacing:.28em;text-transform:uppercase;opacity:.85}
+  .hero h1{font-family:"Cormorant Garamond",serif;font-weight:500;font-size:clamp(40px,9vw,76px);line-height:1.02;margin:10px 0 14px}
+  .hero p{max-width:440px;font-weight:300;font-size:16px;opacity:.92}
+  .btn{display:inline-flex;align-items:center;gap:8px;margin-top:22px;padding:13px 22px;border-radius:999px;background:#fffaf3;color:var(--olive);font-weight:600;font-size:14px;text-decoration:none;border:none;cursor:pointer;transition:transform .2s ease}
+  .btn:active{transform:scale(.97)}
+
+  /* Section */
+  main{max-width:1100px;margin:0 auto;padding:34px 18px 40px}
+  .head{text-align:center;margin-bottom:26px}
+  .tomenu{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--card);color:var(--olive);padding:9px 16px;border-radius:999px;font:600 13px "Manrope",sans-serif;text-decoration:none;margin-bottom:4px}
+  .wordmark{font-family:"Cormorant Garamond",serif;font-size:26px;letter-spacing:.34em;padding-left:.34em;color:var(--olive);font-weight:500;margin-bottom:22px}
+  .head .branch{width:34px;height:34px;margin:0 auto 6px;color:var(--olive)}
+  .head h2{font-family:"Cormorant Garamond",serif;font-weight:500;font-size:clamp(32px,6vw,44px);color:var(--olive)}
+  .head .rule{width:44px;height:1px;background:var(--accent);margin:12px auto 0}
+
+  /* Floor cover cards */
+  .floor-list{display:grid;gap:20px}
+  @media(min-width:860px){.floor-list{grid-template-columns:1fr 1fr}}
+  .fcard{position:relative;display:block;width:100%;border:none;padding:0;border-radius:24px;overflow:hidden;aspect-ratio:16/10;cursor:pointer;background:#ebe1d2;box-shadow:0 20px 44px -28px rgba(60,45,25,.55);transition:transform .25s cubic-bezier(.2,.8,.2,1)}
+  .fcard:active{transform:scale(.98)}
+  .fcard img{width:100%;height:100%;object-fit:cover;transition:transform .6s ease}
+  @media(hover:hover){.fcard:hover img{transform:scale(1.04)}}
+  .fcard::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(30,26,20,.62) 0%,rgba(30,26,20,.2) 55%,rgba(30,26,20,0) 100%)}
+  .fcard-t{position:absolute;left:24px;top:50%;transform:translateY(-50%);z-index:1;color:#fff;text-align:left}
+  .fcard-t h3{font-family:"Cormorant Garamond",serif;font-weight:500;font-size:clamp(44px,12vw,64px);line-height:1;display:flex;align-items:baseline;gap:12px}
+  .fcard-t h3 em{font-style:normal;font-weight:600}
+  .fcard-t p{margin-top:10px;font-size:13px;opacity:.9;letter-spacing:.02em}
+  .fcard-go{position:absolute;right:16px;bottom:16px;z-index:1;width:42px;height:42px;border-radius:50%;background:rgba(255,250,243,.92);color:var(--olive);display:flex;align-items:center;justify-content:center;font-size:18px}
+
+  /* Floor view */
+  .back{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--card);color:var(--olive);padding:9px 16px;border-radius:999px;font:600 13px "Manrope",sans-serif;cursor:pointer;margin:0 0 16px}
+  .cover{position:relative;border-radius:24px;overflow:hidden;aspect-ratio:16/10;margin-bottom:22px;box-shadow:0 18px 40px -28px rgba(60,45,25,.45)}
+  @media(min-width:860px){.cover{aspect-ratio:21/9}}
+  .cover img{width:100%;height:100%;object-fit:cover;cursor:zoom-in}
+  .cover::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(30,26,20,0) 45%,rgba(30,26,20,.6) 100%);pointer-events:none}
+  .cover-t{position:absolute;left:22px;bottom:18px;z-index:1;color:#fff;pointer-events:none}
+  .cover-t h3{font-family:"Cormorant Garamond",serif;font-weight:500;font-size:44px;line-height:1}
+
+  /* Section jump chips */
+  .chips{display:flex;justify-content:center;gap:8px;margin:0 0 30px;flex-wrap:wrap}
+  .chip{border:1px solid var(--line);color:var(--ink);padding:8px 15px;border-radius:999px;font:500 13px "Manrope",sans-serif;text-decoration:none;display:inline-flex;gap:6px;align-items:center}
+  .chip b{font-weight:600;color:var(--accent)}
+
+  .floor[hidden],.floor-list[hidden]{display:none}
+  .sec{margin-bottom:44px;scroll-margin-top:80px}
+  .sec-h{display:flex;align-items:baseline;gap:12px;margin:0 4px 16px}
+  .sec-h h3{font-family:"Cormorant Garamond",serif;font-weight:500;font-size:30px;color:var(--olive);line-height:1}
+  .sec-h span{font-size:12px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase}
+  .sec-h::after{content:"";flex:1;height:1px;background:var(--line);align-self:center}
+  .sec-empty{background:var(--card);border:1px dashed var(--line);border-radius:18px;padding:26px;text-align:center;color:var(--muted);font-size:14px}
+
+  .grid{display:grid;gap:26px}
+  @media(min-width:860px){.grid{grid-template-columns:1fr 1fr}}
+
+  .hall{background:var(--card);border-radius:22px;overflow:hidden;box-shadow:0 1px 0 var(--line),0 18px 40px -28px rgba(60,45,25,.35)}
+  .hall[hidden]{display:none}
+  .gallery{position:relative;aspect-ratio:4/3;background:#ebe1d2}
+  .track{display:flex;height:100%;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}
+  .track::-webkit-scrollbar{display:none}
+  .track img{flex:0 0 100%;width:100%;height:100%;object-fit:cover;scroll-snap-align:center;cursor:zoom-in}
+  .badge{position:absolute;top:14px;left:14px;background:rgba(255,250,243,.92);color:var(--olive);font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;padding:6px 11px;border-radius:999px}
+  .dots{position:absolute;bottom:12px;left:0;right:0;display:flex;justify-content:center;gap:6px}
+  .dots i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.55);transition:all .25s ease}
+  .dots i.on{background:#fff;width:18px;border-radius:4px}
+  .empty{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--muted);gap:8px;font-size:14px}
+
+  .body{padding:22px 22px 24px}
+  .body h4{font-family:"Cormorant Garamond",serif;font-weight:500;font-size:30px;color:var(--olive);line-height:1.1}
+  .meta{display:flex;gap:18px;margin:12px 0 14px;flex-wrap:wrap}
+  .meta div{display:flex;align-items:center;gap:7px;font-size:14px;color:var(--ink)}
+  .meta svg{width:18px;height:18px;color:var(--accent)}
+  .desc{color:#5d574c;font-size:15px;font-weight:300}
+  .tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:16px}
+  .tags span{font-size:12px;padding:6px 11px;border-radius:999px;background:#f1e8db;color:#5d574c}
+
+  footer{text-align:center;padding:36px 20px 50px;color:var(--muted);font-size:13px}
+  footer .serif{font-size:26px;letter-spacing:.32em;color:var(--olive);display:block;margin-bottom:6px}
+
+  /* Lightbox */
+  .lb{position:fixed;inset:0;background:rgba(20,17,13,.94);display:none;align-items:center;justify-content:center;z-index:50;padding:16px}
+  .lb.open{display:flex}
+  .lb img{max-height:90vh;border-radius:10px}
+  .lb button{position:absolute;top:14px;right:14px;width:42px;height:42px;border-radius:50%;border:none;background:rgba(255,255,255,.12);color:#fff;font-size:22px;cursor:pointer}
+</style>
+</head>
+<body>
+
+<main id="halls">
+  <a class="tomenu" href="../">← Меню</a>
+  <div class="head">
+    <div class="wordmark">TAL</div>
+    <svg class="branch" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><path d="M8 32 C16 24 24 16 33 7"/><path d="M14 26c-4 0-7-2-8-5 4-1 7 1 8 5zM19 21c0-4 2-7 5-8 1 4-1 7-5 8zM20 20c-4 0-7-2-8-5 4-1 7 1 8 5zM25 15c0-4 2-7 5-8 1 4-1 7-5 8z"/></svg>
+    <h2>Наши залы</h2>
+    <div class="rule"></div>
+  </div>
+
+<div id="floors"></div>
+</main>
+
+<footer>
+  <span class="serif">TAL</span>
+  Халяль · Алматы
+</footer>
+
+<div class="lb" id="lb"><button aria-label="Закрыть">×</button><img alt=""></div>
+
+<script>
+/* ===== Залы: редактируйте этот список =====
+   floor: 1 или 2
+   type:  "vip" — VIP-залы, "main" — Общий зал, "sofa" — Диванчики
+   guests: сколько гостей: 15 или "10–12" (или null)
+   tables: сколько столов (не обязательно)
+   photos: файлы из папки img/
+=============================================== */
+const HALLS = [
+  {
+    floor: 1,
+    type: "vip",
+    name: "VIP-зал",
+    guests: "10–12",
+    photos: ["img/f1-vip.jpg"],
+    desc: "Камерный зал в зелёных тонах: мягкие шторы, живая зелень над столом и тёплый свет. Для семейных праздников и особых ужинов.",
+    tags: ["Отдельный зал", "Живая зелень", "Один большой стол"]
+  },
+  {
+    floor: 2,
+    type: "vip",
+    name: "VIP-зал",
+    guests: 15,
+    photos: ["img/vip-1.jpg", "img/vip-2.jpg"],
+    desc: "Отдельный уютный зал с панорамными окнами, деревянной отделкой и мягким светом. Идеален для семейных праздников и деловых ужинов.",
+    tags: ["Отдельный зал", "Панорамные окна", "Лаунж-зона с диваном", "Один большой стол"]
+  },
+  {
+    floor: 1,
+    type: "main",
+    name: "Стол в конце зала",
+    guests: "10–12",
+    photos: ["img/f1-end.jpg"],
+    desc: "Большой стол в уединённой части зала, за мягкими шторами. Удобно для семейного ужина или встречи с друзьями.",
+    tags: ["Один большой стол", "Уединённая зона"]
+  },
+  {
+    floor: 1,
+    type: "main",
+    name: "Столы на 4 гостей",
+    guests: 4,
+    photos: ["img/f1-t4-1.jpg","img/f1-t4-2.jpg","img/f1-t4-3.jpg","img/f1-t4-4.jpg","img/f1-t4-5.jpg","img/f1-t4-6.jpg","img/f1-t4-7.jpg"],
+    desc: "Уютные столы для небольшой компании — у мягких штор, у деревянных панелей и рядом с зеленью. Листайте фото, чтобы выбрать место.",
+    tags: ["Круглые и прямоугольные столы", "Разные зоны зала"]
+  },
+  {
+    floor: 1,
+    type: "main",
+    name: "Столы на 2 гостей",
+    guests: 2,
+    photos: ["img/f1-t2-1.jpg"],
+    desc: "Небольшой круглый стол у штор — для ужина вдвоём или встречи за кофе.",
+    tags: ["Круглый стол", "Для двоих"]
+  },
+  {
+    floor: 1,
+    type: "sofa",
+    name: "Диванчики на 6 гостей",
+    guests: 6,
+    tables: 2,
+    photos: ["img/f1-sofa.jpg"],
+    desc: "Мягкие диваны вдоль стены с тёплой подсветкой — уютно для небольшой компании.",
+    tags: ["Мягкие диваны", "Тёплая подсветка"]
+  },
+  {
+    floor: 1,
+    type: "sofa",
+    name: "Диванчик на 4 гостей",
+    guests: 4,
+    photos: ["img/f1-sofa4.jpg"],
+    desc: "Уютная ниша с мягким диваном, подушками с казахским орнаментом и тёплой подсветкой.",
+    tags: ["Мягкий диван", "Уютная ниша", "Тёплая подсветка"]
+  },
+  {
+    floor: 2,
+    type: "main",
+    name: "Стол в конце зала",
+    guests: "6–8",
+    photos: ["img/f2-end.jpg"],
+    desc: "Отдельный стол в тихой части зала, за мягкими шторами. Для небольшой компании или семейного ужина.",
+    tags: ["Уединённая зона", "Один стол"]
+  }
+];
+/* =============================================== */
+
+/* Обложки этажей */
+const FLOOR_COVERS = { 1: "img/floor-1.jpg", 2: "img/floor-2.jpg" };
+
+const SECTIONS = [
+  {type:"vip",  title:"VIP-залы",  badge:"VIP",      sub:"Приватный"},
+  {type:"main", title:"Общий зал", badge:"Общий зал", sub:"Основной зал"},
+  {type:"sofa", title:"Диванчики", badge:"Диванчики", sub:"Мягкая зона"}
+];
+
+const icons = {
+  guests:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="8" r="3.2"/><path d="M3 19c.6-3.4 3-5 6-5s5.4 1.6 6 5"/><circle cx="17" cy="9" r="2.4"/><path d="M16 14c2.6 0 4.4 1.4 5 4"/></svg>',
+  type:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.4 6.8 19.1l1-5.8L3.5 9.2l5.9-.9z"/></svg>',
+  table:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 9h18M6 9v10M18 9v10M5 5h14"/></svg>',
+  photo:'<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="6" width="18" height="13" rx="2"/><circle cx="12" cy="12.5" r="3.2"/><path d="M8.5 6l1.5-2h4l1.5 2"/></svg>'
+};
+
+const card = (h, sec) => `
+  <article class="hall">
+    <div class="gallery">
+      ${h.photos.length ? `<div class="track">${h.photos.map(p=>`<img src="${p}" alt="${h.name}" loading="lazy">`).join("")}</div>` : `<div class="empty">${icons.photo}Фото скоро</div>`}
+      <span class="badge">${sec.badge}</span>
+      ${h.photos.length>1 ? `<div class="dots">${h.photos.map((_,j)=>`<i class="${j?"":"on"}"></i>`).join("")}</div>` : ""}
+    </div>
+    <div class="body">
+      <h4>${h.name}</h4>
+      <div class="meta">
+        ${h.guests ? `<div>${icons.guests}${typeof h.guests==="number" ? "до "+h.guests : h.guests} гостей</div>` : ""}
+        ${h.tables ? `<div>${icons.table}${h.tables} ${h.tables===1?"стол":"стола"}</div>` : ""}
+        <div>${icons.type}${sec.sub}</div>
+      </div>
+      ${h.desc ? `<p class="desc">${h.desc}</p>` : ""}
+      ${h.tags && h.tags.length ? `<div class="tags">${h.tags.map(t=>`<span>${t}</span>`).join("")}</div>` : ""}
+    </div>
+  </article>`;
+
+const ROMAN = {1:"I", 2:"II"};
+const count = f => HALLS.filter(h=>h.floor===f).length;
+
+document.getElementById("floors").innerHTML =
+  `<div class="floor-list" id="floor-list">${[1,2].map(f=>`
+    <button class="fcard" data-open="${f}" aria-label="Открыть ${f} этаж">
+      <img src="${FLOOR_COVERS[f]}" alt="${f} этаж ресторана TAL">
+      <div class="fcard-t"><h3><em>${ROMAN[f]}</em> этаж</h3><p>VIP-залы · Общий зал · Диванчики</p></div>
+      <span class="fcard-go">→</span>
+    </button>`).join("")}</div>` +
+  [1,2].map(f => {
+  const inFloor = HALLS.filter(h => h.floor === f);
+  return `<div class="floor" data-floor="${f}" hidden>
+    <button class="back" data-back>← Все этажи</button>
+    <div class="cover"><img src="${FLOOR_COVERS[f]}" alt="${f} этаж ресторана TAL"><div class="cover-t"><h3>${ROMAN[f]} этаж</h3></div></div>
+    <nav class="chips">${SECTIONS.map(s=>`<a class="chip" href="#f${f}-${s.type}">${s.title} <b>${inFloor.filter(h=>h.type===s.type).length}</b></a>`).join("")}</nav>
+    ${SECTIONS.map(s => {
+      const list = inFloor.filter(h => h.type === s.type);
+      return `<section class="sec" id="f${f}-${s.type}">
+        <div class="sec-h"><h3>${s.title}</h3><span>${ROMAN[f]} этаж</span></div>
+        ${list.length ? `<div class="grid">${list.map(h=>card(h,s)).join("")}</div>` : `<div class="sec-empty">Фото скоро появятся</div>`}
+      </section>`;
+    }).join("")}
+  </div>`;
+}).join("");
+
+/* dots */
+document.querySelectorAll(".gallery").forEach(g=>{
+  const t=g.querySelector(".track"), d=g.querySelectorAll(".dots i");
+  if(!t||!d.length) return;
+  t.addEventListener("scroll",()=>{const k=Math.round(t.scrollLeft/t.clientWidth);d.forEach((x,j)=>x.classList.toggle("on",j===k))},{passive:true});
+});
+
+/* floors: #floor-1 / #floor-2, empty = list of floors */
+function route(){
+  const m = location.hash.match(/^#floor-(\d)$/);
+  const f = m ? m[1] : null;
+  document.getElementById("floor-list").hidden = !!f;
+  document.querySelectorAll(".floor").forEach(x=>x.hidden = x.dataset.floor!==f);
+}
+document.addEventListener("click",e=>{
+  const o=e.target.closest("[data-open]");
+  if(o){ location.hash="floor-"+o.dataset.open; document.getElementById("halls").scrollIntoView(); return; }
+  if(e.target.closest("[data-back]")){
+    history.replaceState(null,"",location.pathname+location.search); route();
+    document.getElementById("halls").scrollIntoView({behavior:"smooth"});
+  }
+});
+window.addEventListener("hashchange",route);
+route();
+
+/* chips: smooth scroll without changing the URL */
+document.addEventListener("click",e=>{
+  const c=e.target.closest(".chip"); if(!c) return;
+  e.preventDefault(); document.querySelector(c.getAttribute("href")).scrollIntoView({behavior:"smooth"});
+});
+
+/* lightbox */
+const lb=document.getElementById("lb"), lbi=lb.querySelector("img");
+document.addEventListener("click",e=>{
+  if(e.target.matches(".track img, .cover img")){lbi.src=e.target.src;lb.classList.add("open")}
+  else if(e.target===lb||e.target.closest(".lb button")) lb.classList.remove("open");
+});
+</script>
+</body>
+</html>
