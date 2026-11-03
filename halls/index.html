@@ -31,7 +31,7 @@
   .btn:active{transform:scale(.97)}
 
   /* Section */
-  main{max-width:1100px;margin:0 auto;padding:34px 18px 40px}
+  main{max-width:1100px;margin:0 auto;padding:34px 18px calc(40px + env(safe-area-inset-bottom,0px))}
   .head{text-align:center;margin-bottom:26px}
   .tomenu{display:inline-flex;margin-bottom:16px!important;align-items:center;gap:6px;border:1px solid var(--line);background:var(--card);color:var(--olive);padding:9px 16px;border-radius:999px;font:600 13px "Manrope",sans-serif;text-decoration:none;margin-bottom:4px}
   .wordmark{font-family:"Cormorant Garamond",serif;font-size:26px;letter-spacing:.34em;padding-left:.34em;color:var(--olive);font-weight:500;margin-bottom:22px}
@@ -119,10 +119,6 @@
 <div id="floors"></div>
 </main>
 
-<footer>
-  <span class="serif">TAL</span>
-  Халяль · Алматы
-</footer>
 
 <div class="lb" id="lb"><button aria-label="Закрыть">×</button><img alt=""></div>
 
