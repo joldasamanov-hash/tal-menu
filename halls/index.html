@@ -96,6 +96,9 @@
   .meta div{display:flex;align-items:center;gap:7px;font-size:14px;color:var(--ink)}
   .meta svg{width:18px;height:18px;color:var(--accent)}
   .desc{color:#5d574c;font-size:15px;font-weight:300}
+  .events{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin-top:16px}
+  .events span{width:100%;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:600}
+  .events b{font-weight:600;font-size:13px;padding:7px 12px;border-radius:999px;background:var(--olive);color:#fffaf3}
   .tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:16px}
   .tags span{font-size:12px;padding:6px 11px;border-radius:999px;background:#f1e8db;color:#5d574c}
 
@@ -199,6 +202,16 @@ const HALLS = [
   {
     floor: 2,
     type: "main",
+    name: "Банкетная зона для больших компаний",
+    guests: "до 40",
+    photos: ["img/f2-banquet-1.jpg","img/f2-banquet-2.jpg","img/f2-banquet-3.jpg","img/f2-banquet-4.jpg","img/f2-banquet-5.jpg"],
+    desc: "Отдельная зона в конце зала с длинным банкетным столом и лаунж-уголком. Идеально для семейных торжеств и праздников.",
+    events: ["Тұсаукесер", "Туған күн", "Қыз ұзату", "Қырқынан шығару", "Мерейтой", "Сырға салу", "Тәтті шай"],
+    tags: ["Длинный банкетный стол", "Лаунж-зона", "Вешалка для гостей"]
+  },
+  {
+    floor: 2,
+    type: "main",
     name: "Стол в конце зала",
     guests: "6–8",
     photos: ["img/f2-end-2.jpg"],
@@ -275,6 +288,7 @@ const card = (h, sec) => `
         <div>${icons.type}${sec.sub}</div>
       </div>
       ${h.desc ? `<p class="desc">${h.desc}</p>` : ""}
+      ${h.events && h.events.length ? `<div class="events"><span>Для праздников:</span>${h.events.map(t=>`<b>${t}</b>`).join("")}</div>` : ""}
       ${h.tags && h.tags.length ? `<div class="tags">${h.tags.map(t=>`<span>${t}</span>`).join("")}</div>` : ""}
     </div>
   </article>`;
