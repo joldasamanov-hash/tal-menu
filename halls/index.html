@@ -85,8 +85,6 @@
   .track::-webkit-scrollbar{display:none}
   .track img{flex:0 0 100%;width:100%;height:100%;object-fit:cover;scroll-snap-align:center;cursor:zoom-in}
   .badge{position:absolute;top:14px;left:14px;background:rgba(255,250,243,.92);color:var(--olive);font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;padding:6px 11px;border-radius:999px}
-  .count{position:absolute;right:12px;bottom:10px;z-index:2;background:rgba(30,26,20,.55);color:#fff;font:500 12px "Manrope",sans-serif;padding:5px 10px;border-radius:999px;letter-spacing:.04em;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);pointer-events:none}
-  .count b{font-weight:700}
   .dots{position:absolute;bottom:12px;left:0;right:0;display:flex;justify-content:center;gap:6px}
   .dots i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.55);transition:all .25s ease}
   .dots i.on{background:#fff;width:18px;border-radius:4px}
@@ -281,7 +279,6 @@ const card = (h, sec) => `
     <div class="gallery">
       ${h.photos.length ? `<div class="track">${h.photos.map(p=>`<img src="${p}" alt="${h.name}" loading="lazy">`).join("")}</div>` : `<div class="empty">${icons.photo}Фото скоро</div>`}
       <span class="badge">${sec.badge}</span>
-      ${h.photos.length>1 ? `<span class="count"><b>1</b> / ${h.photos.length}</span>` : ""}
       ${h.photos.length>1 ? `<div class="dots">${h.photos.map((_,j)=>`<i class="${j?"":"on"}"></i>`).join("")}</div>` : ""}
     </div>
     <div class="body">
@@ -326,9 +323,9 @@ document.getElementById("floors").innerHTML =
 
 /* dots */
 document.querySelectorAll(".gallery").forEach(g=>{
-  const t=g.querySelector(".track"), d=g.querySelectorAll(".dots i"), c=g.querySelector(".count b");
+  const t=g.querySelector(".track"), d=g.querySelectorAll(".dots i");
   if(!t||!d.length) return;
-  t.addEventListener("scroll",()=>{const k=Math.round(t.scrollLeft/t.clientWidth);d.forEach((x,j)=>x.classList.toggle("on",j===k));if(c)c.textContent=k+1},{passive:true});
+  t.addEventListener("scroll",()=>{const k=Math.round(t.scrollLeft/t.clientWidth);d.forEach((x,j)=>x.classList.toggle("on",j===k))},{passive:true});
 });
 
 /* floors: #floor-1 / #floor-2, empty = list of floors */
