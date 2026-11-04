@@ -242,15 +242,17 @@ header .tag{min-height:calc(min(100vw,440px)*330/800);font-size:15.5px;line-heig
 .hero .lang button[aria-pressed="true"]{color:#fff;border-bottom-color:#f2d79c}
 .hero::before{content:"";position:absolute;inset:0 0 auto 0;height:64px;z-index:2;background:linear-gradient(rgba(0,0,0,.35),rgba(0,0,0,0));pointer-events:none}
 .bar{padding-top:6px}
+/* залы + языки в одну строку */
+.hrow{position:relative;z-index:11;display:flex;align-items:stretch;gap:10px;width:100%;max-width:440px;margin:4px auto 16px}
+.hrow .halls-btn{flex:1;min-width:0;margin:0;grid-template-columns:64px 1fr auto;gap:12px;padding:8px 10px 8px 8px}
+.hrow .halls-btn .th{width:64px;height:52px}
+.hrow .lang{flex:none;display:grid;grid-template-columns:1fr 1fr;gap:2px 4px;margin:0;padding:4px 6px;align-content:center;border:1px solid var(--line);border-radius:16px;background:var(--bg);box-shadow:none;clip-path:none}
+.hrow .lang button{font-size:13px;padding:6px 6px 4px;letter-spacing:.04em;color:var(--muted);text-shadow:none}
+.hrow .lang button[aria-pressed="true"]{color:var(--gold);border-bottom-color:var(--gold)}
+@media (max-width:330px){.hrow{flex-direction:column}.hrow .lang{grid-template-columns:repeat(4,auto);justify-content:center}}
 </style>
 <div class="wrap">
 <div class="hero"><img src="img/hero.webp" alt="TAL cafe &amp; restaurant" fetchpriority="high">
-  <div class="lang" role="group" aria-label="Тіл / Язык">
-    <button id="b-kz" type="button" aria-pressed="false">ҚАЗ</button>
-    <button id="b-ru" type="button" aria-pressed="true">РУС</button>
-    <button id="b-en" type="button" aria-pressed="false">ENG</button>
-    <button id="b-zh" type="button" aria-pressed="false">中文</button>
-  </div>
 </div>
 <header>
 <h1 class="vh" id="h1">TAL — Горное меню</h1>
@@ -277,7 +279,12 @@ header .tag{min-height:calc(min(100vw,440px)*330/800);font-size:15.5px;line-heig
 </svg>
 </div>
   <div class="tag" id="tag"></div>
-  <a class="halls-btn" id="halls-btn" href="halls/"><img class="th" src="img/halls-thumb.jpg" alt="" width="76" height="56"><span class="tx"><b id="halls-txt">Залы и VIP</b><small id="halls-sub">Банкеты до 40 гостей</small></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+  <div class="hrow"><a class="halls-btn" id="halls-btn" href="halls/"><img class="th" src="img/halls-thumb.jpg" alt="" width="76" height="56"><span class="tx"><b id="halls-txt">Залы и VIP</b><small id="halls-sub">Банкеты до 40 гостей</small></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a><div class="lang" role="group" aria-label="Тіл / Язык">
+    <button id="b-kz" type="button" aria-pressed="false">ҚАЗ</button>
+    <button id="b-ru" type="button" aria-pressed="true">РУС</button>
+    <button id="b-en" type="button" aria-pressed="false">ENG</button>
+    <button id="b-zh" type="button" aria-pressed="false">中文</button>
+  </div></div>
 </header>
 <div class="bar">
   <nav class="chips" id="chips" aria-label="Разделы"></nav>
