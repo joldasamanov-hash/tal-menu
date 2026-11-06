@@ -80,7 +80,9 @@
   .dots i.on{background:#fff;width:18px;border-radius:4px}
 
   .body{padding:20px 20px 22px}
+  .kind{font-size:14px;font-weight:500;color:var(--gold);margin-bottom:2px}
   .body h4{font-family:var(--serif);font-weight:500;font-size:29px;line-height:1.1}
+  .kind+h4{font-size:36px}
   .meta{display:flex;gap:16px;flex-wrap:wrap;margin:10px 0 12px;font-size:15px;font-weight:500}
   .meta span{display:inline-flex;align-items:center;gap:7px}
   .meta svg{width:18px;height:18px;color:var(--gold)}
@@ -145,16 +147,18 @@ const FLOOR_COVERS = { 1: "img/floor-1.jpg", 2: "img/floor-2.jpg" };
 const HALLS = [
   { floor:1, type:"vip", g:[10,12], events:EVENTS,
     photos:["img/f1-vip-3.jpg"],
-    name:{ru:"VIP-зал",kz:"VIP-зал",en:"VIP room",zh:"VIP包间"},
+    kind:{ru:"VIP-зал",kz:"VIP-зал",en:"VIP room",zh:"VIP包间"},
+    name:{ru:"Отау",kz:"Отау",en:"Otau",zh:"Otau"},
     desc:{ru:"Камерный зал в зелёных тонах: мягкие шторы, живая зелень над столом и тёплый свет. Для семейных праздников и особых ужинов.",
           kz:"Жасыл түстегі жайлы зал: жұмсақ перделер, үстел үстіндегі тірі өсімдіктер және жылы жарық. Отбасылық мерекелер мен ерекше кештерге арналған.",
           en:"An intimate room in green tones: soft curtains, living greenery above the table and warm light. For family celebrations and special dinners.",
           zh:"绿色调的私密包间：柔软的窗帘、餐桌上方的绿植和温暖的灯光，适合家庭庆典和特别晚宴。"},
     tags:{ru:["Отдельный зал","Живая зелень","Один большой стол"],kz:["Жеке зал","Тірі өсімдіктер","Бір үлкен үстел"],en:["Private room","Living greenery","One large table"],zh:["独立包间","绿植装饰","一张大桌"]} },
 
-  { floor:2, type:"vip", g:[15], events:EVENTS,
+  { floor:2, type:"vip", g:[18], events:EVENTS,
     photos:["img/vip-1.jpg","img/vip-2.jpg"],
-    name:{ru:"VIP-зал",kz:"VIP-зал",en:"VIP room",zh:"VIP包间"},
+    kind:{ru:"VIP-зал",kz:"VIP-зал",en:"VIP room",zh:"VIP包间"},
+    name:{ru:"Бірлік",kz:"Бірлік",en:"Birlik",zh:"Birlik"},
     desc:{ru:"Отдельный уютный зал с панорамными окнами, деревянной отделкой и мягким светом. Идеален для семейных праздников и деловых ужинов.",
           kz:"Панорамалық терезелері, ағаш әрлеуі және жұмсақ жарығы бар жеке жайлы зал. Отбасылық мерекелер мен іскерлік кешкі асқа өте ыңғайлы.",
           en:"A cosy private room with panoramic windows, wood panelling and soft light. Ideal for family celebrations and business dinners.",
@@ -164,8 +168,9 @@ const HALLS = [
   { floor:2, type:"vip", g:[40], events:EVENTS,
     feature:{ru:"За ширмой, подвижные двери",kz:"Қалқа артында, жылжымалы есіктер",en:"Behind a screen, sliding doors",zh:"屏风后，移动门"},
     photos:["img/f2-banquet-1.jpg","img/f2-banquet-2.jpg","img/f2-banquet-3.jpg","img/f2-banquet-4.jpg","img/f2-banquet-5.jpg"],
-    name:{ru:"VIP-зона для больших компаний",kz:"Үлкен компанияларға арналған VIP-аймақ",en:"VIP area for large groups",zh:"大型聚会VIP区"},
-    desc:{ru:"Отдельная VIP-зона в конце зала с длинным банкетным столом и лаунж-уголком. Идеально для семейных торжеств и праздников.",
+    kind:{ru:"VIP-зона",kz:"VIP-аймақ",en:"VIP area",zh:"VIP区"},
+    name:{ru:"Төр",kz:"Төр",en:"Tör",zh:"Tör"},
+    desc:{ru:"VIP-зона для больших компаний в конце зала: длинный банкетный стол и лаунж-уголок. Идеально для семейных торжеств и праздников.",
           kz:"Залдың соңындағы ұзын банкет үстелі мен лаунж-бұрышы бар жеке VIP-аймақ. Отбасылық тойлар мен мерекелерге өте ыңғайлы.",
           en:"A separate VIP area at the end of the hall with a long banquet table and a lounge corner. Perfect for family celebrations and festive occasions.",
           zh:"位于大厅尽头的独立VIP区，设有长宴会桌和休息角，非常适合家庭盛宴和节日庆祝。"},
@@ -312,14 +317,15 @@ function listJoin(items){ return items.map((x,i)=> i && lang!=="zh" && !/^VIP/.t
 
 function card(h){
   const T=UI[lang], name=h.name[lang], fl=T.floor(ROMAN[h.floor]);
-  const wa=`https://wa.me/${WA}?text=${encodeURIComponent(T.msg(name,fl))}`;
+  const full=h.kind?`${h.kind[lang]} «${name}»`:name;
+  const wa=`https://wa.me/${WA}?text=${encodeURIComponent(T.msg(full,fl))}`;
   return `<article class="hall">
     <div class="gallery">
       <div class="track">${h.photos.map(p=>`<img src="${p}" alt="${esc(name)}" loading="lazy">`).join("")}</div>
       ${h.photos.length>1 ? `<div class="dots" aria-hidden="true">${h.photos.map((_,j)=>`<i class="${j?"":"on"}"></i>`).join("")}</div>` : ""}
     </div>
     <div class="body">
-      <h4>${esc(name)}</h4>
+      ${h.kind?`<p class="kind">${esc(h.kind[lang])}</p>`:""}<h4>${esc(name)}</h4>
       <div class="meta"><span>${icons.guests}${guests(h)}</span>${h.tables?`<span>${icons.table}${T.tables(h.tables)}</span>`:""}${h.feature?`<span>${icons.door}${esc(h.feature[lang])}</span>`:""}</div>
       <p class="desc">${esc(h.desc[lang])}</p>
       ${h.events ? `<div class="events"><p>${T.events}</p><div>${h.events.map(e=>`<b>${esc(e)}</b>`).join("")}</div></div>` : ""}
