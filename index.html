@@ -259,6 +259,10 @@ header .tag{min-height:calc(min(100vw,440px)*330/800);font-size:15.5px;line-heig
 .op-list button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .op-list b{min-width:26px;height:26px;border-radius:13px;background:#f2d79c;color:#3a2e22;font-size:13px;display:flex;align-items:center;justify-content:center}
 .cart-list .cop{display:block;margin-top:2px;color:var(--muted);font-size:13.5px}
+.hrow{flex-direction:column;gap:10px}
+.hrow .lang{order:-1;display:flex;justify-content:center;gap:22px;border:0;padding:0;background:none}
+.hrow .lang button{font-size:14.5px;padding:6px 2px 4px}
+.hrow .halls-btn{width:100%;max-width:none}
 </style>
 <div class="wrap">
 <div class="hero"><img src="img/hero.webp" alt="TAL cafe &amp; restaurant" fetchpriority="high">
@@ -288,12 +292,12 @@ header .tag{min-height:calc(min(100vw,440px)*330/800);font-size:15.5px;line-heig
 </svg>
 </div>
   <div class="tag" id="tag"></div>
-  <div class="hrow"><a class="halls-btn" id="halls-btn" href="halls/"><img class="th" src="img/halls-thumb.jpg" alt="" width="76" height="56"><span class="tx"><b id="halls-txt">Залы и VIP</b><small id="halls-sub">Банкеты до 40 гостей</small></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a><div class="lang" role="group" aria-label="Тіл / Язык">
+  <div class="hrow"><div class="lang" role="group" aria-label="Тіл / Язык">
     <button id="b-kz" type="button" aria-pressed="false">ҚАЗ</button>
     <button id="b-ru" type="button" aria-pressed="true">РУС</button>
     <button id="b-en" type="button" aria-pressed="false">ENG</button>
     <button id="b-zh" type="button" aria-pressed="false">中文</button>
-  </div></div>
+  </div><a class="halls-btn" id="halls-btn" href="halls/"><img class="th" src="img/halls-thumb.jpg" alt="" width="76" height="56"><span class="tx"><b id="halls-txt">Залы и VIP</b><small id="halls-sub">Банкеты до 40 гостей</small></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a></div>
 </header>
 <div class="bar">
   <nav class="chips" id="chips" aria-label="Разделы"></nav>
