@@ -281,6 +281,13 @@ header .tag{min-height:calc(min(100vw,440px)*330/800);font-size:15.5px;line-heig
 .chips{border-radius:14px}
 .bar::after{border-radius:0 14px 14px 0}
 .bar{background:linear-gradient(var(--bg),var(--bg)) top/100% 24px no-repeat}
+/* full-bleed covers without box-shadow (Samsung/Chrome auto-dark inverts shadows) */
+header,.lang{box-shadow:none!important;clip-path:none!important}
+header::after,.lang::after{content:"";position:absolute;z-index:-1;top:0;bottom:0;left:calc(50% - 50vw);width:100vw;background:var(--bg);pointer-events:none}
+.lang::after{top:-4px;bottom:-10px}
+header{isolation:isolate}
+.lang{isolation:isolate}
+:root{color-scheme:light dark}
 </style>
 <div class="wrap">
 <div class="hero"><img src="img/hero.webp" srcset="img/hero-800.webp 800w, img/hero.webp 1200w" sizes="100vw" alt="TAL cafe &amp; restaurant" fetchpriority="high">
