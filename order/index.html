@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#12110f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TAL Заказ">
+<title>TAL Заказ</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="icon" type="image/png" href="../favicon-48.png">
+<style>
+@font-face{font-family:'Golos';font-style:normal;font-weight:400;font-display:swap;src:url(../fonts/golos-400-cyr.woff2) format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+@font-face{font-family:'Golos';font-style:normal;font-weight:400;font-display:swap;src:url(../fonts/golos-400-lat.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Golos';font-style:normal;font-weight:500;font-display:swap;src:url(../fonts/golos-500-cyr.woff2) format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+@font-face{font-family:'Golos';font-style:normal;font-weight:500;font-display:swap;src:url(../fonts/golos-500-lat.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+
+/* Палитра совпадает с сайтом меню TAL: тёмный зал, тёплое золото. Макет: шапка / центр с карточками / нижняя панель. */
+:root{
+  --bg:#12110f; --panel:#1b1915; --raise:#24211b; --fg:#ece5d6; --muted:#9a9384; --gold:#c8a66a; --gold-ink:#1a1408;
+  --line:#2b2820; --ok:#8fbf8f; --warn:#d9895a;
+  --sans:'Golos',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:16px;line-height:1.35;overscroll-behavior:none}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;touch-action:manipulation}
+input{font:inherit;color:inherit}
+button:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+[hidden]{display:none!important}
+svg{width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+#app{height:100%;display:flex;flex-direction:column;padding:env(safe-area-inset-top) 0 0}
+.top{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--line)}
+.brand{font-weight:500;letter-spacing:.14em;font-size:15px}
+.brand span{color:var(--muted);letter-spacing:.04em;font-weight:400;margin-left:6px}
+.top .sp{flex:1}
+.table{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:14px}
+.table input{width:56px;height:36px;border-radius:10px;border:1px solid var(--line);background:var(--panel);text-align:center;font-size:17px}
+.chip{height:36px;min-width:44px;padding:0 12px;border-radius:18px;border:1px solid var(--line);background:var(--panel);font-size:14px;color:var(--fg)}
+.chip.on{border-color:var(--gold);color:var(--gold)}
+.chip svg{font-size:18px;vertical-align:-3px}
+
+#stage{flex:1;min-height:0;overflow-y:auto;padding:16px;display:flex;flex-direction:column}
+.stack{margin:auto 0;display:flex;flex-direction:column;gap:12px}
+.empty{text-align:center;color:var(--muted);padding:0 12px}
+.empty h2{margin:0 0 10px;font-size:22px;font-weight:500;color:var(--fg)}
+.empty .ex{display:inline-block;margin:2px 0 12px;color:var(--gold);font-size:19px}
+.empty p{margin:0;max-width:30ch;margin-inline:auto}
+
+.card{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:6px 10px 10px 14px;box-shadow:0 10px 30px rgba(0,0,0,.35);animation:pop .18s ease-out}
+@keyframes pop{from{opacity:0;transform:translateY(8px) scale(.97)}to{opacity:1;transform:none}}
+.chead{display:flex;align-items:center;gap:0;margin-right:-6px}
+.chead .body{flex:1;min-width:0;display:block;text-align:left;padding:6px 4px 6px 0}
+.ic{flex:none;width:44px;height:44px;display:grid;place-items:center;color:var(--muted);font-size:22px}
+.card .name{display:block;font-size:26px;font-weight:500;line-height:1.12}
+.card .full{display:block;margin-top:2px;font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card .note{display:inline-block;margin-top:6px;padding:2px 10px;border-radius:12px;background:var(--raise);color:var(--gold);font-size:14px}
+.card .secnote{display:block;margin-top:4px;font-size:13px;color:var(--gold)}
+.foot{display:flex;align-items:center;gap:10px;margin-right:0}
+.qty{display:flex;align-items:center;border:1px solid var(--line);border-radius:14px;background:var(--bg)}
+.qty button{width:46px;height:50px;font-size:24px;display:grid;place-items:center}
+.qty b{min-width:28px;text-align:center;font-size:20px;font-weight:500;font-variant-numeric:tabular-nums}
+.addbtn{flex:1;height:52px;border-radius:14px;background:var(--gold);color:var(--gold-ink);font-size:18px;font-weight:500}
+.addbtn:active{filter:brightness(.92)}
+.alt{background:var(--raise);color:var(--gold);border:1px solid var(--gold)}
+
+.opts{margin:2px 0 10px -14px;margin-right:-10px;border-top:1px solid var(--line)}
+.opt{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;min-height:56px;padding:8px 16px;text-align:left;border-bottom:1px solid var(--line)}
+.opt:active{background:var(--raise)}
+.opt .on{font-size:19px;font-weight:500}
+.opt .os{display:block;font-size:13px;color:var(--muted);font-weight:400}
+.opt .go{color:var(--gold);font-size:22px}
+
+.ghost{padding:10px 14px;border:1px dashed var(--line);border-radius:14px;color:var(--muted);font-size:17px;opacity:.8}
+.ghost b{color:var(--fg);font-weight:500}
+
+.heard{min-height:58px;padding:6px 16px 30px;display:flex;align-items:center;gap:8px;color:var(--muted);font-size:15px}
+.heard .hl{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.heard button{color:var(--gold);text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
+.heard .miss{color:var(--warn)}
+.clearall{align-self:center;color:var(--muted);font-size:14px;min-height:36px;text-decoration:underline;text-underline-offset:3px}
+
+.typebar{display:flex;gap:8px;padding:6px 16px 8px}
+.typebar input{flex:1;height:48px;border-radius:14px;border:1px solid var(--line);background:var(--panel);padding:0 14px;font-size:17px;min-width:0}
+.typebar button{height:48px;padding:0 18px;border-radius:14px;background:var(--raise);border:1px solid var(--gold);color:var(--gold);font-weight:500}
+
+.dock{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;padding:10px 16px calc(12px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:var(--bg)}
+.dockbtn{height:56px;border-radius:16px;border:1px solid var(--line);background:var(--panel);font-size:16px;display:flex;align-items:center;justify-content:center;gap:8px}
+.dockbtn svg{font-size:20px}
+.dockbtn .cnt{min-width:24px;height:24px;border-radius:12px;background:var(--gold);color:var(--gold-ink);font-size:14px;font-weight:500;display:grid;place-items:center;padding:0 6px;font-variant-numeric:tabular-nums}
+.dockbtn .cnt.zero{background:var(--raise);color:var(--muted)}
+.mic{position:relative;width:88px;height:88px;margin:-26px 6px 0;border-radius:50%;background:var(--panel);border:2px solid var(--gold);color:var(--gold);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:13px;font-weight:500;box-shadow:0 6px 22px rgba(0,0,0,.5)}
+.mic svg{font-size:30px}
+.mic.on{background:var(--gold);color:var(--gold-ink)}
+.mic.on::after{content:"";position:absolute;inset:-8px;border-radius:50%;border:2px solid var(--gold);opacity:.6;animation:ring 1.4s ease-out infinite}
+@keyframes ring{from{transform:scale(.92);opacity:.7}to{transform:scale(1.18);opacity:0}}
+.mic.off{opacity:.55}
+
+.sheet{position:fixed;inset:0;z-index:20;background:var(--bg);display:flex;flex-direction:column;padding-top:env(safe-area-inset-top);animation:up .2s ease-out}
+@keyframes up{from{transform:translateY(24px);opacity:0}to{transform:none;opacity:1}}
+.sheet header{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line)}
+.sheet h2{margin:0;font-size:20px;font-weight:500;flex:1}
+.sheet h2 small{color:var(--muted);font-weight:400;font-size:15px;margin-left:6px}
+.close{width:44px;height:44px;display:grid;place-items:center;font-size:24px;color:var(--muted);margin-right:-8px}
+.sbody{flex:1;min-height:0;overflow-y:auto;padding:4px 0 24px}
+.sfoot{display:flex;gap:10px;padding:10px 16px calc(12px + env(safe-area-inset-bottom));border-top:1px solid var(--line)}
+.sfoot button{flex:1;height:54px;border-radius:14px;border:1px solid var(--line);background:var(--panel);font-size:17px}
+.sfoot .primary{background:var(--gold);color:var(--gold-ink);border-color:var(--gold);font-weight:500}
+.sbody h3{margin:16px 16px 4px;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);font-weight:500}
+.muted{color:var(--muted);padding:24px 16px;text-align:center}
+
+.row{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--line)}
+.row .rn{flex:1;min-width:0}
+.row .rn b{font-weight:500;font-size:18px;display:block}
+.row .rn small{display:block;color:var(--gold);font-size:14px}
+.row .rn .sub{color:var(--muted)}
+.row .qty button{width:42px;height:44px;font-size:22px}
+.row .qty b{display:inline;font-size:18px}
+.row .noteb{color:var(--muted);font-size:13px;text-decoration:underline;text-underline-offset:3px;min-height:44px;padding:0 4px}
+.noteinput{width:100%;height:44px;border-radius:12px;border:1px solid var(--gold);background:var(--panel);padding:0 12px;margin-top:6px;font-size:16px}
+
+.find{display:flex;gap:8px;padding:10px 16px}
+.find input{flex:1;min-width:0;height:48px;border-radius:14px;border:1px solid var(--line);background:var(--panel);padding:0 14px;font-size:17px}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:0 16px 10px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chips button{flex:none;height:38px;padding:0 14px;border-radius:19px;border:1px solid var(--line);background:var(--panel);font-size:15px;white-space:nowrap}
+.chips button.on{border-color:var(--gold);color:var(--gold)}
+.mi{display:flex;align-items:center;gap:10px;width:100%;min-height:58px;padding:8px 16px;text-align:left;border-bottom:1px solid var(--line)}
+.mi:active{background:var(--panel)}
+.mi .t{flex:1;min-width:0}
+.mi .t b{display:block;font-weight:500;font-size:17px}
+.mi .t small{display:block;color:var(--muted);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mi .p{color:var(--muted);font-size:14px;font-variant-numeric:tabular-nums}
+.mi .n{min-width:26px;height:26px;border-radius:13px;background:var(--gold);color:var(--gold-ink);font-size:14px;font-weight:500;display:grid;place-items:center;padding:0 7px}
+.mi .plus{width:40px;height:40px;border-radius:12px;border:1px solid var(--line);display:grid;place-items:center;color:var(--gold);font-size:22px}
+
+.toast{position:fixed;left:16px;right:16px;bottom:calc(112px + env(safe-area-inset-bottom));z-index:40;background:var(--raise);border:1px solid var(--gold);border-radius:14px;padding:10px 14px;display:flex;align-items:center;gap:12px;box-shadow:0 8px 28px rgba(0,0,0,.5);animation:pop .16s ease-out}
+.toast span{flex:1;min-width:0}
+.toast button{color:var(--gold);font-weight:500;min-height:40px;padding:0 6px}
+.sheet .toast{bottom:calc(86px + env(safe-area-inset-bottom))}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+@media (max-height:640px){.card .name{font-size:24px}.empty h2{font-size:19px}}
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="top">
+    <div class="brand">TAL<span>заказ</span></div>
+    <div class="sp"></div>
+    <label class="table">Стол <input id="tbl" inputmode="numeric" maxlength="4" placeholder="№" autocomplete="off" aria-label="Номер стола"></label>
+    <button id="btnType" class="chip" type="button" aria-label="Написать фразу"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M7 10h.01M11 10h.01M15 10h.01M7 14h10"/></svg></button>
+    <button id="btnLang" class="chip" type="button" aria-label="Язык распознавания">RU</button>
+  </header>
+
+  <main id="stage" aria-live="polite">
+    <div class="stack">
+    <div id="empty" class="empty">
+      <h2>Скажи заказ</h2>
+      <span class="ex">«два плова, баурсак, казахский чай»</span>
+      <p>Нажми «Заказ» и говори. Каждая позиция появится карточкой. Тап по карточке добавляет её в список.</p>
+    </div>
+    <div id="cards" style="display:flex;flex-direction:column;gap:12px"></div>
+    <div id="ghosts" style="display:flex;flex-direction:column;gap:8px"></div>
+    <button id="clearAll" class="clearall" type="button" hidden>Убрать все карточки</button>
+    </div>
+  </main>
+
+  <div id="heard" class="heard" aria-live="polite"></div>
+
+  <form id="typeBar" class="typebar" hidden autocomplete="off">
+    <input id="txt" type="text" placeholder="Напиши или продиктуй клавиатурой" enterkeyhint="send" aria-label="Фраза заказа">
+    <button type="submit">Ок</button>
+  </form>
+
+  <nav class="dock">
+    <button id="btnMenu" class="dockbtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Меню</button>
+    <button id="btnMic" class="mic" type="button" aria-pressed="false">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
+      <span id="micLbl">Заказ</span>
+    </button>
+    <button id="btnList" class="dockbtn" type="button">Список<span id="cnt" class="cnt zero">0</span></button>
+  </nav>
+</div>
+
+<section id="sheetList" class="sheet" hidden aria-label="Список заказа">
+  <header><h2>Заказ<small id="listTbl"></small></h2><button class="close" data-close type="button" aria-label="Закрыть">×</button></header>
+  <div id="listBody" class="sbody"></div>
+  <div class="sfoot"><button id="btnClear" type="button">Очистить</button><button id="btnCopy" class="primary" type="button">Копировать</button></div>
+</section>
+
+<section id="sheetMenu" class="sheet" hidden aria-label="Меню">
+  <header><h2>Меню</h2><button class="close" data-close type="button" aria-label="Закрыть">×</button></header>
+  <div class="find"><input id="q" type="search" placeholder="Найти блюдо" autocomplete="off" aria-label="Поиск по меню"></div>
+  <div id="chips" class="chips"></div>
+  <div id="menuBody" class="sbody"></div>
+</section>
+
+<section id="sheetOpt" class="sheet" hidden aria-label="Выбор варианта">
+  <header><h2 id="optTitle">Вариант</h2><button class="close" data-close type="button" aria-label="Закрыть">×</button></header>
+  <div id="optBody" class="sbody"></div>
+</section>
+
+<div id="toast" class="toast" hidden></div>
+
+<script>
+/* Движок: превращает сказанную фразу в карточки позиций меню.
+   Работает и в браузере, и в Node (для проверки). */
+(function (root) {
+  'use strict';
+
+  /* ---------- нормализация ---------- */
+  const KZ = { 'ә': 'а', 'ғ': 'г', 'қ': 'к', 'ң': 'н', 'ө': 'о', 'ұ': 'у', 'ү': 'у', 'һ': 'х', 'і': 'и', 'ё': 'е', 'э': 'е' };
+  const LAT2 = [['sch', 'щ'], ['sh', 'ш'], ['ch', 'ч'], ['zh', 'ж'], ['kh', 'х'], ['ts', 'ц'], ['ck', 'к'], ['ee', 'и'], ['oo', 'у'], ['ph', 'ф'], ['th', 'т'], ['ya', 'я'], ['yu', 'ю'], ['ie', 'и']];
+  const LAT1 = { a: 'а', b: 'б', c: 'к', d: 'д', e: 'е', f: 'ф', g: 'г', h: 'х', i: 'и', j: 'дж', k: 'к', l: 'л', m: 'м', n: 'н', o: 'о', p: 'п', q: 'к', r: 'р', s: 'с', t: 'т', u: 'у', v: 'в', w: 'в', x: 'кс', y: 'и', z: 'з' };
+
+  function translit(w) {
+    for (const [a, b] of LAT2) w = w.split(a).join(b);
+    let out = '';
+    for (let i = 0; i < w.length; i++) {
+      const ch = w[i];
+      if (ch === 'c' && /[eiy]/.test(w[i + 1] || '')) out += 'с';
+      else out += LAT1[ch] !== undefined ? LAT1[ch] : ch;
+    }
+    return out;
+  }
+
+  function normText(s) {
+    s = String(s || '').toLowerCase();
+    s = s.replace(/[әғқңөұүһіёэ]/g, c => KZ[c]);
+    s = s.replace(/[a-z]+/g, translit);
+    s = s.replace(/[ъь]/g, '');
+    s = s.replace(/[^а-я0-9\s]/g, ' ');
+    return s.split(/\s+/).filter(Boolean);
+  }
+
+  const ENDINGS = ['ами', 'ями', 'ыми', 'ими', 'ого', 'его', 'ому', 'ему', 'ий', 'ый', 'ой', 'ей', 'ая', 'яя', 'ое', 'ее', 'ие', 'ые', 'ых', 'их', 'ым', 'им', 'ом', 'ем', 'ам', 'ям', 'ах', 'ях', 'ов', 'ев', 'ию', 'ую', 'юю', 'а', 'я', 'у', 'ю', 'ы', 'и', 'е', 'о']
+    .sort((a, b) => b.length - a.length);
+  const IRREG = { 'чая': 'чай', 'чаю': 'чай', 'чае': 'чай', 'чаем': 'чай', 'чаи': 'чай', 'чаев': 'чай' };
+
+  function stem(w) {
+    if (/^\d+$/.test(w)) return w;
+    if (IRREG[w]) return IRREG[w];
+    if (w.length <= 3) return w;
+    for (const e of ENDINGS) {
+      if (w.endsWith(e) && w.length - e.length >= 3) return w.slice(0, -e.length);
+    }
+    return w;
+  }
+
+  // ключ для сравнения: ы/й -> и, двойные буквы схлопываются
+  function key(s) {
+    return s.replace(/[ый]/g, 'и').replace(/(.)\1+/g, '$1');
+  }
+
+  const STOP = new Set(['и', 'а', 'но', 'да', 'ну', 'еще', 'еше', 'ешо', 'мне', 'нам', 'нас', 'мы', 'давайте', 'давай', 'дайте', 'будем', 'будет', 'буду',
+    'пожалуиста', 'пожалуста', 'принесите', 'потом', 'также', 'тоже', 'плюс', 'итак', 'вот', 'значит', 'так', 'это', 'нужно', 'надо', 'хотим', 'хочу',
+    'закажем', 'заказ', 'заказать', 'на', 'с', 'со', 'в', 'во', 'из', 'по', 'для', 'к', 'или', 'от', 'у', 'за', 'там', 'после', 'сначала', 'сразу',
+    'пока', 'все', 'бы', 'ли', 'же', 'ка', 'спасибо', 'угу', 'ага', 'короче', 'ладно', 'ок', 'океи', 'хорошо', 'тал', 'меню', 'блюдо', 'порция', 'порции', 'порцию', 'штук', 'штуки', 'штуку']);
+
+  const NUMS_RAW = {
+    'один': 1, 'одна': 1, 'одно': 1, 'одну': 1, 'одного': 1, 'два': 2, 'две': 2, 'двое': 2, 'пару': 2, 'пара': 2, 'три': 3, 'трое': 3,
+    'четыре': 4, 'четверо': 4, 'пять': 5, 'пятеро': 5, 'шесть': 6, 'семь': 7, 'восемь': 8, 'девять': 9, 'десять': 10,
+    'бир': 1, 'еки': 2, 'уш': 3, 'бес': 5, 'алты': 6, 'жети': 7, 'сегиз': 8, 'тогиз': 9
+  };
+
+  const NUMS = {};
+  Object.keys(NUMS_RAW).forEach(k => { NUMS[normText(k)[0]] = NUMS_RAW[k]; });
+
+  const UNIT = new Set(['л', 'мл', 'шт']);
+
+  /* ---------- сходство слов ---------- */
+  function lev(a, b) {
+    const m = a.length, n = b.length;
+    if (!m) return n; if (!n) return m;
+    let prev = new Array(n + 1), cur = new Array(n + 1);
+    for (let j = 0; j <= n; j++) prev[j] = j;
+    for (let i = 1; i <= m; i++) {
+      cur[0] = i;
+      for (let j = 1; j <= n; j++) {
+        cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+      }
+      [prev, cur] = [cur, prev];
+    }
+    return prev[n];
+  }
+
+  const SIMC = new Map();
+  function tokSim(a, b) {
+    if (a === b) return 1;
+    const ck = a < b ? a + '|' + b : b + '|' + a;
+    let v = SIMC.get(ck);
+    if (v === undefined) { v = tokSim0(a, b); SIMC.set(ck, v); }
+    return v;
+  }
+  function tokSim0(a, b) {
+    const la = a.length, lb = b.length, mn = Math.min(la, lb), mx = Math.max(la, lb);
+    if (mn <= 3) return 0;
+    if (mn >= 4 && mx - mn <= 3 && (a.startsWith(b) || b.startsWith(a))) return 0.88;
+    const d = lev(a, b);
+    const s = 1 - d / mx;
+    if (mn <= 4) return d <= 1 && s >= 0.75 ? s : 0;
+    return s >= 0.78 ? s : 0;
+  }
+
+  /* ---------- построение индекса меню ---------- */
+  const ALIASES = {
+    'Green салат с брокколи, оливками и эдемаме': ['грин салат', 'гринсалат', 'грин'],
+    'Чучвара по-восточному': ['пельмени'],
+    'Ауыл кеспе с курицей': ['аул кеспе', 'аул'],
+    'Гуйру лагман': ['гуру лагман', 'гуру', 'гуиру'],
+    'Гуйру цомян': ['гуру цомян', 'гуиру цомян'],
+    'Дин дин цомян': ['дин дин'],
+    'Традиционный куырдак': ['курдак', 'кырдак', 'куурдак'],
+    'Национальный бешбармак': ['бесбармак', 'беш бармак'],
+    'Плов праздничный': ['палау'],
+    'Казан-кебаб из рёбрышек ягнёнка с картошкой': ['казанкебаб', 'казан кебаб'],
+    'Крылышки': ['крылья', 'крыло'],
+    'Люля-кебаб': ['люля', 'люли кебаб'],
+    'Овощи на мангале': ['овощи гриль', 'овощи мангал'],
+    'Адана-кебаб из баранины с домашним йогуртом и баклажаном': ['адана', 'адана кебаб'],
+    'Оссобука из ягнёнка с картофельным пюре и соусом из чернослива и можжевельника': ['оссобуко'],
+    'Рибай стейк травяного откорма': ['стейк', 'рибай стейк'],
+    'Хычины 1 шт': ['хычин', 'хычины'],
+    'Нан астау на 3-4 персоны': ['нан астау', 'нан'],
+    'Баурсаки со сметаной': ['бауырсак', 'баурсак', 'боорсак', 'борсок', 'баурсаки'],
+    'Запечённый лосось с зелёным горошком и сырным муссом': ['лосось'],
+    'Классический бургер из телятины/курицы с картофельными лодочками': ['бургер'],
+    'Домашняя пицца Маргарита': ['маргарита', 'пицца маргарита'],
+    'Домашняя пицца Пепперони': ['пепперони', 'пицца пепперони'],
+    'Наггетсы': ['нагетсы', 'нагеты', 'наггетс'],
+    'Картофель фри': ['фри', 'картошка фри'],
+    'Картофельное пюре': ['пюре', 'картошка пюре'],
+    'Наше мороженое TAL': ['мороженое', 'мороженого'],
+    'Особенный Наполеон': ['наполеон'],
+    'Графские развалины': ['развалины'],
+    'Almaly с мороженым': ['алмалы', 'алмали'],
+    'Киевский': ['киевский торт', 'киев'],
+    'Immunity фреш': ['иммунити', 'имьюнити', 'иммунити фреш'],
+    'Шубат / кумыс микс': ['шубат кумыс микс'],
+    'Кунан кумыс': ['кумыс', 'кымыз', 'кунан'],
+    'Hot shot': ['хот шот'],
+    'TAL Kombucha': ['комбуча'],
+    'Эспрессо': ['экспрессо'],
+    'Эспрессо допио': ['допио', 'двойной эспрессо'],
+    'Флэт уайт': ['флет уайт', 'флэт вайт', 'флет вайт', 'флэтуайт'],
+    'Капучино или латте на альтернативном молоке': ['альтернативное молоко', 'капучино на альтернативном'],
+    'Горячий шоколад «Kazakhstan» с маршмеллоу': ['горячий шоколад'],
+    'Эспрессо тоник': ['тоник'],
+    'Бамбл кофе': ['бамбл'],
+    'Кофе по-турецки с финиками цуккари на 2 персоны': ['турецкий кофе', 'кофе по турецки'],
+    'Кофе по-арабски с финиками цуккари на 2 персоны 0,7 л': ['арабский кофе', 'кофе по арабски'],
+    'Чай масала': ['масала'],
+    'Классический чёрный чай': ['черный чай'],
+    'Спешл сенча': ['сенча'],
+    'Эрл Грей блю': ['эрл грей', 'эрл грэй'],
+    'Грин жасмин': ['жасмин', 'зеленый жасмин'],
+    'Молочный улун': ['улун'],
+    'Горный TAL чай': ['горный чай', 'горный'],
+    'Чай по-казахски с талканом и тары': ['казахский чай', 'чай по казахски'],
+    'Жиде чай': ['жиде'],
+    'Лимон к чаю': ['лимон'],
+    'Молоко к чаю': ['молоко'],
+    'Мёд Jantaq': ['мед', 'джантак', 'жантак'],
+    'Варенье из сосновых шишек': ['варенье'],
+    'Ассорти джем': ['джем'],
+    'Ассорти орехи': ['орехи ассорти'],
+    'Орехи к чаю': ['орехи'],
+    'Авторский лимонад TAL': ['лимонад'],
+    'Вода Miglior 0,5 л': ['мильор', 'миллиор', 'миглиор'],
+    'Coca-Cola / Coca-Cola Zero 0,25 л': ['кока кола', 'кола', 'колу', 'зеро', 'кока колу'],
+    'Borjomi 0,3 л': ['боржоми', 'боржом'],
+    'Ice tea': ['айс ти', 'айс чай', 'холодный чай', 'айс'],
+    'Молочный коктейль Oreo 0,3 л': ['орео'],
+    'Молочный коктейль Snickers 0,3 л': ['сникерс'],
+    'Молочный коктейль Bounty 0,3 л': ['баунти'],
+    'Молочный коктейль банан 0,3 л': ['банановый коктейль']
+  };
+
+  // слова-категории: сказал только «чай» — показываем раздел, а не гадаем
+  const CAT_WORDS = [['чай', 15], ['кофе', 14], ['суп', 2], ['салат', 0], ['закуска', 1], ['паста', 8], ['десерт', 11], ['выпечка', 7],
+    ['гарнир', 10], ['напиток', 18], ['напитки', 18], ['фреш', 17], ['сок', 17]];
+  const CATEGORIES = {};
+
+  function tokensOf(str, forEntry) {
+    const out = [];
+    for (const w of normText(str)) {
+      if (STOP.has(w)) continue;
+      if (/^\d+$/.test(w)) { if (forEntry) continue; out.push({ raw: w, num: parseInt(w, 10), s: w }); continue; }
+      if (UNIT.has(w)) continue;
+      if (forEntry && w === 'без') continue;
+      const st = stem(w);
+      if (forEntry && /^персон/.test(st)) continue;
+      out.push({ raw: w, num: (NUMS[w] !== undefined ? NUMS[w] : null), s: key(st) });
+    }
+    return out;
+  }
+
+  CAT_WORDS.forEach(([w, sec]) => { CATEGORIES[tokensOf(w, true)[0].s] = sec; });
+
+  function createEngine(menu) {
+    const items = menu.items, secs = menu.secs;
+    const idxByName = {};
+    items.forEach((it, i) => { idxByName[it.n] = i; });
+    for (const k of Object.keys(ALIASES)) if (idxByName[k] === undefined) throw new Error('Нет позиции для алиаса: ' + k);
+
+    // имена позиций (полное русское, казахское, короткое, алиасы)
+    const entries = items.map((it, i) => {
+      const names = [it.n, it.k, it.s].concat(ALIASES[it.n] || []).filter(Boolean);
+      return { i, names: names.map(n => ({ text: n, toks: tokensOf(n, true) })).filter(n => n.toks.length) };
+    });
+
+    // idf по словам
+    const df = {};
+    entries.forEach(e => {
+      const seen = new Set();
+      e.names.forEach(n => n.toks.forEach(t => seen.add(t.s)));
+      seen.forEach(s => { df[s] = (df[s] || 0) + 1; });
+    });
+    const N = items.length;
+    const idf = s => Math.log(1 + N / (df[s] || 1));
+    entries.forEach(e => e.names.forEach(n => {
+      n.toks.forEach(t => { t.w = idf(t.s); });
+      n.totW = n.toks.reduce((a, t) => a + t.w, 0) || 1;
+    }));
+
+    // слова раздела (для «паста альфредо», «чай масала»)
+    const secCtx = secs.map(s => {
+      const set = new Set();
+      tokensOf(s.ru, true).forEach(t => set.add(t.s));
+      return [...set];
+    });
+
+    function scoreName(q, nm, ctx) {
+      const used = new Array(nm.toks.length).fill(false);
+      let matched = 0, cov = 0, direct = 0;
+      for (const t of q) {
+        let bj = -1, bs = 0;
+        for (let j = 0; j < nm.toks.length; j++) {
+          if (used[j]) continue;
+          const s = tokSim(t.s, nm.toks[j].s);
+          if (s > bs) { bs = s; bj = j; }
+        }
+        if (bj >= 0) { used[bj] = true; matched += bs; cov += nm.toks[bj].w * bs; direct++; }
+        else {
+          let cs = 0;
+          for (const c of ctx) cs = Math.max(cs, tokSim(t.s, c));
+          if (cs > 0) matched += 0.6 * cs;
+        }
+      }
+      const prec = matched / q.length;
+      const covr = cov / nm.totW;
+      return { score: direct ? prec * (0.55 + 0.45 * covr) : prec * 0.3, direct };
+    }
+
+    // ранжирование позиций под окно слов
+    function rank(q) {
+      const res = [];
+      for (const e of entries) {
+        const ctx = secCtx[items[e.i].sec];
+        let best = 0;
+        for (const nm of e.names) {
+          const r = scoreName(q, nm, ctx);
+          if (r.score > best) best = r.score;
+        }
+        if (best > 0) res.push({ i: e.i, score: best });
+      }
+      res.sort((a, b) => b.score - a.score);
+      return res;
+    }
+
+    const ACCEPT = 0.6, MAXL = 5;
+
+    function bestWindow(toks, i, allowNumFirst) {
+      const all = [];
+      for (let L = 1; L <= MAXL && i + L <= toks.length; L++) {
+        const w = toks.slice(i, i + L);
+        if (w.some((t, k) => t.num !== null && !(allowNumFirst && k === 0))) break;
+        const r = rank(w);
+        if (!r.length) continue;
+        all.push({ L, val: r[0].score + 0.02 * (L - 1), top: r[0].score, ranked: r });
+      }
+      if (!all.length) return null;
+      let best = all[0];
+      for (const c of all) if (c.val > best.val) best = c;
+      // «греческий салат»: короткое имя совпало на 100%, но следующее слово относится к той же позиции
+      for (const c of all) {
+        if (c.L > best.L && c.ranked[0].i === best.ranked[0].i && c.top >= 0.78) best = c;
+      }
+      return best;
+    }
+
+    function makeCard(w, qty, heard) {
+      const top = w.ranked[0].score;
+      const cut = Math.max(0.55, top - 0.16);
+      const cands = w.ranked.filter(r => r.score >= cut).slice(0, 5).map(r => ({ i: r.i, score: +r.score.toFixed(3) }));
+      return { kind: cands.length > 1 ? 'multi' : 'item', qty: qty || 1, cands, heard, note: '' };
+    }
+
+    function parse(text) {
+      const toks = tokensOf(text, false);
+      const cards = [];
+      let qty = null, i = 0, last = null;
+      while (i < toks.length) {
+        const t = toks[i];
+        if (t.raw === 'без' && i + 1 < toks.length && last) {
+          last.note = (last.note ? last.note + ', ' : '') + 'без ' + toks[i + 1].raw;
+          i += 2; continue;
+        }
+        if (t.num !== null) {
+          // число может быть частью названия («Три шоколада»)
+          const w0 = bestWindow(toks, i, true);
+          if (w0 && w0.L >= 2 && w0.top >= 0.9) {
+            const c = makeCard(w0, qty, toks.slice(i, i + w0.L).map(x => x.raw).join(' '));
+            cards.push(c); last = c; qty = null; i += w0.L; continue;
+          }
+          if (t.num > 20) { i++; continue; }
+          if (qty === null && last && last.qtyAuto && i === toks.length - 1) { last.qty = t.num; last.qtyAuto = false; i++; continue; }
+          qty = t.num; i++; continue;
+        }
+        const w = bestWindow(toks, i, false);
+        const word = t.s;
+        if (w && w.top >= ACCEPT) {
+          // слово-категория («чай», «кофе») без уточнения
+          if (w.L === 1 && CATEGORIES[word] !== undefined && w.top < 0.9) {
+            const c = { kind: 'cat', sec: CATEGORIES[word], qty: 1, cands: [], heard: t.raw, note: '' };
+            cards.push(c); last = c; qty = null; i++; continue;
+          }
+          const c = makeCard(w, qty, toks.slice(i, i + w.L).map(x => x.raw).join(' '));
+          c.qtyAuto = qty === null;
+          cards.push(c); last = c; qty = null; i += w.L; continue;
+        }
+        if (CATEGORIES[word] !== undefined) {
+          const c = { kind: 'cat', sec: CATEGORIES[word], qty: 1, cands: [], heard: t.raw, note: '' };
+          cards.push(c); last = c; qty = null; i++; continue;
+        }
+        i++;
+      }
+      return cards;
+    }
+
+    // поиск для списка меню: одна строка -> позиции по убыванию
+    function search(text, limit) {
+      const q = tokensOf(text, false).filter(t => t.num === null);
+      const raw = String(text || '').toLowerCase().replace(/ё/g, 'е').trim();
+      if (!q.length && !raw) return items.map((_, i) => ({ i, score: 1 }));
+      const r = q.length ? rank(q) : [];
+      const map = new Map(r.map(x => [x.i, x.score]));
+      if (raw.length >= 2) {
+        items.forEach((it, i) => {
+          const hay = (it.n + ' ' + it.s).toLowerCase().replace(/ё/g, 'е');
+          if (hay.includes(raw)) map.set(i, Math.max(map.get(i) || 0, 0.7));
+        });
+      }
+      const out = [...map.entries()].map(([i, score]) => ({ i, score })).filter(x => x.score >= 0.3);
+      out.sort((a, b) => b.score - a.score);
+      return out.slice(0, limit || 40);
+    }
+
+    return { parse, search, items, secs };
+  }
+
+  const api = { createEngine, normText, stem, tokSim };
+  if (typeof module !== 'undefined' && module.exports) module.exports = api;
+  else root.VoiceEngine = api;
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>
+(function(){
+'use strict';
+var MENU = {"secs":[{"ru":"Салаты","kz":"Салаттар","g":"Салаты","note":""},{"ru":"Закуски","kz":"Дәмтатымдар","g":"Салаты","note":""},{"ru":"Супы","kz":"Көжелер","g":"Горячие","note":""},{"ru":"Лагман","kz":"Лагман","g":"Горячие","note":""},{"ru":"Восточная кухня","kz":"Шығыс тағамдары","g":"Горячие","note":""},{"ru":"Мангал","kz":"Отта піскен","g":"Горячие","note":""},{"ru":"Горячие блюда","kz":"Ыстық тағамдар","g":"Горячие","note":""},{"ru":"Выпечка","kz":"Нан өнімдері","g":"Выпечка","note":""},{"ru":"Паста","kz":"Паста","g":"Горячие","note":"на выбор: пенне, спагетти, фетучини"},{"ru":"TAL KIDS","kz":"TAL KIDS","g":"Горячие","note":""},{"ru":"Гарниры","kz":"Гарнирлер","g":"Горячие","note":""},{"ru":"Авторские десерты","kz":"Авторлық тәттілер","g":"Десерты","note":""},{"ru":"Шоты","kz":"Шоттар","g":"Бар","note":""},{"ru":"Степные напитки","kz":"Дала сусындары","g":"Бар","note":""},{"ru":"Кофе","kz":"Кофе","g":"Бар","note":""},{"ru":"Чай","kz":"Шай","g":"Бар","note":""},{"ru":"Освежающие напитки","kz":"Салқын сусындар","g":"Бар","note":""},{"ru":"Фреши и смузи","kz":"Фреш және смузи","g":"Бар","note":""},{"ru":"Напитки","kz":"Сусындар","g":"Бар","note":""}],"items":[{"n":"Греческий салат классический","k":"Грек салаты классикалық","s":"Греческий","p":3450,"sec":0,"o":null,"op":null},{"n":"Green салат с брокколи, оливками и эдемаме","k":"Брокколи, зәйтүн мен эдемаме қосылған Green салат","s":"Green салат","p":3650,"sec":0,"o":null,"op":null},{"n":"Оливье","k":"Оливье","s":"Оливье","p":3190,"sec":0,"o":null,"op":null},{"n":"Салат со свеклой и творожным сыром","k":"Қызылша мен сүзбе салаты","s":"Свекла с творожным","p":3650,"sec":0,"o":null,"op":null},{"n":"Запечённая свекла с сыром буррата собственного приготовления","k":"Қуырылған қызылша және өзіміз даярлаған ірімшік буррата","s":"Буррата","p":5050,"sec":0,"o":null,"op":null},{"n":"Салат азиатский с хрустящей курицей","k":"Қытырлақ тауықпен азиялық салат","s":"Азиатский","p":3990,"sec":0,"o":null,"op":null},{"n":"Тёплый салат с телятиной и артишоками в имбирном соусе","k":"Зімбір тұздығындағы бұзау еті мен артишок қосылған жылы салат","s":"Тёплый салат","p":5050,"sec":0,"o":null,"op":null},{"n":"Спринг-роллы с говядиной и овощами","k":"Бұзау еті және көкеніс қосылған спринг ролл","s":"Спринг-роллы","p":3150,"sec":1,"o":null,"op":null},{"n":"Рулеты из баклажанов по-домашнему","k":"Үйдегідей баялды орамалары","s":"Рулеты баклажан","p":3570,"sec":1,"o":null,"op":null},{"n":"Домашние соленья","k":"Үй тұздықтары","s":"Соленья","p":3150,"sec":1,"o":null,"op":null},{"n":"Хумус с курицей и грибами, с арабской питой","k":"Түрік наны мен санырауқұлақ жульены қосылған классикалық хумус","s":"Хумус","p":4190,"sec":1,"o":null,"op":null},{"n":"Фунчоза по-восточному на 2-3 персоны","k":"Шығыс фунчозасы 2-3 адамға","s":"Фунчоза","p":6670,"sec":1,"o":null,"op":null},{"n":"Долма в пряно-оранжевом соусе","k":"Ащы-қызғылтсары тұздығындағы долма","s":"Долма","p":4190,"sec":1,"o":null,"op":null},{"n":"Крем-суп из чечевицы с гренками","k":"Жасымақ қосылған крем - сорпа қытырлақ нанымен","s":"Чечевичный суп","p":2690,"sec":2,"o":null,"op":null},{"n":"Крем-суп из тыквы с гренками","k":"Асқабақ қосылған крем-сорпа қытырлақ нанымен","s":"Тыквенный суп","p":2690,"sec":2,"o":null,"op":null},{"n":"Коже TAL из семи злаков","k":"Жеті дәнмен көже TAL","s":"Коже","p":3490,"sec":2,"o":null,"op":null},{"n":"Нарын кочевников","k":"Көшпенділер нарыны","s":"Нарын","p":3290,"sec":2,"o":null,"op":null},{"n":"Чучвара по-восточному","k":"Шығысша чучвара","s":"Чучвара","p":3290,"sec":2,"o":null,"op":null},{"n":"Хаш с чёрным хлебом","k":"Қара нанмен ұсынылатын хаш","s":"Хаш","p":3390,"sec":2,"o":null,"op":null},{"n":"Машхурда","k":"Машхурда","s":"Машхурда","p":3390,"sec":2,"o":null,"op":null},{"n":"Ауыл кеспе с курицей","k":"Ауыл кеспе тауық етімен","s":"Кеспе","p":2690,"sec":2,"o":null,"op":null},{"n":"Гуйру лагман","k":"Ғуйру лагман","s":"Гуйру лагман","p":3490,"sec":3,"o":null,"op":null},{"n":"Гуйру цомян","k":"Ғуйру цомян","s":"Гуйру цомян","p":3490,"sec":3,"o":null,"op":null},{"n":"Дин дин цомян","k":"Дин дин цомян","s":"Дин дин цомян","p":3490,"sec":3,"o":null,"op":null},{"n":"Лагман с рёбрышками","k":"Қабырға лагманы","s":"Лагман рёбрышки","p":5990,"sec":3,"o":null,"op":null},{"n":"Ачик цомян","k":"Ащы цомян","s":"Ачик цомян","p":3590,"sec":3,"o":null,"op":null},{"n":"Манты","k":"Мәнті","s":"Манты","p":3490,"sec":4,"o":["телятина","телятина и тыква"],"op":null},{"n":"Лагман по-домашнему с бульоном","k":"Үйдегідей лағман сорпамен","s":"Лагман домашний","p":3490,"sec":4,"o":null,"op":null},{"n":"Традиционный куырдак","k":"Дәстүрлі қуырдақ","s":"Куырдак","p":4990,"sec":4,"o":null,"op":null},{"n":"Национальный бешбармак","k":"Ұлттық бешбармақ","s":"Бешбармак","p":5995,"sec":4,"o":null,"op":null},{"n":"Сырне из ягнёнка","k":"Қозы етінен сірне","s":"Сырне","p":6090,"sec":4,"o":null,"op":null},{"n":"Плов праздничный","k":"\"Мерекелік\" палау","s":"Плов","p":3590,"sec":4,"o":null,"op":null},{"n":"Казан-кебаб из рёбрышек ягнёнка с картошкой","k":"Қазан-кебаб қозының қабырғасы мен картоп","s":"Казан-кебаб","p":6190,"sec":4,"o":null,"op":null},{"n":"Крылышки","k":"Қанатшалар","s":"Крылышки","p":2250,"sec":5,"o":null,"op":null},{"n":"Филе ягнёнка","k":"Тоқтының сүбесі","s":"Филе ягнёнка","p":2950,"sec":5,"o":null,"op":null},{"n":"Филе курицы","k":"Тауық филесі","s":"Филе курицы","p":2250,"sec":5,"o":null,"op":null},{"n":"Люля-кебаб","k":"Люля-кебаб","s":"Люля","p":2950,"sec":5,"o":null,"op":null},{"n":"Овощи на мангале","k":"Мангалда даярланған көкөністер","s":"Овощи мангал","p":2250,"sec":5,"o":null,"op":null},{"n":"Адана-кебаб из баранины с домашним йогуртом и баклажаном","k":"Қой етінен жасалған адана кебабы, үй йогурты және баялдымен","s":"Адана","p":4190,"sec":5,"o":null,"op":null},{"n":"Шампиньон","k":"Шампиньон","s":"Шампиньон","p":2250,"sec":5,"o":null,"op":null},{"n":"Хан ассорти на 4-5 персон","k":"Хан ассорти 4-5 адамға","s":"Хан ассорти 4-5","p":17540,"sec":5,"o":null,"op":null},{"n":"Хан ассорти на 6-8 персон","k":"Хан ассорти 6-8 адамға","s":"Хан ассорти 6-8","p":34500,"sec":5,"o":null,"op":null},{"n":"Хрустящая котлета из курицы с картофелем и соусом каймак с печёным чесноком","k":"Қытырлақ тауық котлеті, картоп және қаймақ-сарымсақ тұздығымен","s":"Котлета куриная","p":4150,"sec":6,"o":null,"op":null},{"n":"Филе курицы с грибным соусом и бидаем","k":"Саңырауқұлақ тұздығындағы тауық филесі бидаймен","s":"Филе курицы с бидаем","p":4150,"sec":6,"o":null,"op":null},{"n":"Домашние котлеты из телятины с пшеничным ризотто","k":"Бұзау етінен дайындалған үй котлеттері, бидай ризоттосымен","s":"Котлеты телятина","p":4150,"sec":6,"o":null,"op":null},{"n":"Форель коктал с бидаем","k":"Бидай қосылған форель кокталы","s":"Форель коктал","p":6690,"sec":6,"o":null,"op":null},{"n":"Запечённый лосось с зелёным горошком и сырным муссом","k":"Ақсерке стейкі, жасыл бұршақ және ірімшік мусс","s":"Лосось","p":8100,"sec":6,"o":null,"op":null},{"n":"Оссобука из ягнёнка с картофельным пюре и соусом из чернослива и можжевельника","k":"Қара өрік пен арша соусы қосылған қозы етінен дайындалған оссобука, картоп пюресімен","s":"Оссобука","p":9100,"sec":6,"o":null,"op":null},{"n":"Рибай стейк травяного откорма","k":"Рибай стейк шөппен қоректенген","s":"Рибай","p":9990,"sec":6,"o":null,"op":null},{"n":"Классический бургер из телятины/курицы с картофельными лодочками","k":"Бургер классикалық бұзау/тауық етімен картоп қайықтарымен","s":"Бургер","p":3890,"sec":6,"o":null,"op":null},{"n":"Хычины 1 шт","k":"Хычины 1 дана","s":"Хычин","p":1910,"sec":7,"o":null,"op":null},{"n":"Самса слоёная с говядиной 2 шт","k":"Бұзау етімен қаттама самса 2 дана","s":"Самса говядина","p":1890,"sec":7,"o":null,"op":null},{"n":"Самса слоёная с курицей 2 шт","k":"Тауық етімен қаттама самса 2 дана","s":"Самса курица","p":1890,"sec":7,"o":null,"op":null},{"n":"Хлеб из печи 2 шт","k":"Пеш наны 2 дана","s":"Хлеб","p":970,"sec":7,"o":null,"op":null},{"n":"Нан астау на 3-4 персоны","k":"Нан астау 3-4 адамға","s":"Нан астау","p":9020,"sec":7,"o":null,"op":null},{"n":"Чебуреки из телятины 3 шт","k":"Бұзау етінен чебурек 3 дана","s":"Чебуреки","p":2590,"sec":7,"o":null,"op":null},{"n":"Баурсаки со сметаной","k":"Бауырсақ қаймақпен","s":"Баурсаки","p":1690,"sec":7,"o":null,"op":null},{"n":"Альфредо","k":"Альфредо","s":"Альфредо","p":3990,"sec":8,"o":null,"op":null},{"n":"Болоньезе","k":"Болоньезе","s":"Болоньезе","p":3990,"sec":8,"o":null,"op":null},{"n":"С лососем","k":"Ақсеркемен","s":"Паста с лососем","p":4890,"sec":8,"o":null,"op":null},{"n":"Наггетсы","k":"Наггетстер","s":"Наггетсы","p":2790,"sec":9,"o":null,"op":null},{"n":"Сырные палочки с морковными брусочками","k":"Сәбіз таяқшалары бар ірімшік таяқшалар","s":"Сырные палочки","p":2790,"sec":9,"o":null,"op":null},{"n":"Пельмени KIDS Family","k":"KIDS Family тұшпарасы","s":"Пельмени KIDS","p":2790,"sec":9,"o":null,"op":null},{"n":"Домашняя пицца Маргарита","k":"Үйдегідей Маргарита пиццасы","s":"Маргарита","p":3700,"sec":9,"o":null,"op":null},{"n":"Домашняя пицца Пепперони","k":"Үйдегідей Пепперони пиццасы","s":"Пепперони","p":3900,"sec":9,"o":null,"op":null},{"n":"Вареники с картофелем","k":"Картопты вареник","s":"Вареники","p":2590,"sec":9,"o":null,"op":null},{"n":"Картофель фри","k":"Фри картобы","s":"Фри","p":1630,"sec":10,"o":null,"op":null},{"n":"Картофельное пюре","k":"Картоп езбесі","s":"Пюре","p":1630,"sec":10,"o":null,"op":null},{"n":"Рис припущенный","k":"Буға піскен күріш","s":"Рис","p":1630,"sec":10,"o":null,"op":null},{"n":"Капуста, тушёная по-домашнему","k":"Үйдегідей бұқтырылған қырыққабат","s":"Капуста","p":1630,"sec":10,"o":null,"op":null},{"n":"Бидай с миксом зелени и домашним сливочным маслом","k":"Бидай, жасыл шөптер қоспасы және үйде жасалған сары май","s":"Бидай","p":1630,"sec":10,"o":null,"op":null},{"n":"Наше мороженое TAL","k":"Өзіміздің TAL балмұздағы","s":"Мороженое","p":1790,"sec":11,"o":null,"op":null},{"n":"Национальные сладости","k":"Ұлттық тәттілер","s":"Нац. сладости","p":6990,"sec":11,"o":null,"op":null},{"n":"Тарыкейк","k":"Тарыкейк","s":"Тарыкейк","p":3050,"sec":11,"o":null,"op":null},{"n":"Медовик","k":"Бал торты","s":"Медовик","p":2990,"sec":11,"o":null,"op":null},{"n":"Особенный Наполеон","k":"Ерекше Наполеон","s":"Наполеон","p":3150,"sec":11,"o":null,"op":null},{"n":"Графские развалины","k":"Граф қирандылары","s":"Графские развалины","p":3200,"sec":11,"o":null,"op":null},{"n":"Шоколадный TAL","k":"Шоколадты TAL","s":"Шоколадный","p":3150,"sec":11,"o":null,"op":null},{"n":"Almaly с мороженым","k":"Almaly балмұздақпен","s":"Almaly","p":3580,"sec":11,"o":null,"op":null},{"n":"Шанырак","k":"Шаңырақ","s":"Шанырак","p":0,"sec":11,"o":null,"op":null},{"n":"Киевский","k":"Киев торты","s":"Киевский","p":0,"sec":11,"o":null,"op":null},{"n":"Чернично-лимонное","k":"Көкжидек-лимон десерті","s":"Чернично-лимонный","p":0,"sec":11,"o":null,"op":null},{"n":"Павлова","k":"Павлова","s":"Павлова","p":0,"sec":11,"o":null,"op":null},{"n":"Коржи без глютена","k":"Глютенсіз торт","s":"Без глютена","p":0,"sec":11,"o":null,"op":null},{"n":"Три шоколада","k":"Үш шоколад","s":"Три шоколада","p":0,"sec":11,"o":null,"op":null},{"n":"Чиприани","k":"Чиприани","s":"Чиприани","p":0,"sec":11,"o":null,"op":null},{"n":"Слоёная белковая","k":"Ақуыз кремді қатпарлы трубочка","s":"Слоёная белковая","p":0,"sec":11,"o":null,"op":null},{"n":"Шубат / кумыс микс","k":"Шубат / қымыз микс","s":"Шубат-кумыс микс","p":3100,"sec":12,"o":null,"op":null},{"n":"Immunity фреш","k":"Immunity фреш","s":"Immunity","p":3100,"sec":12,"o":null,"op":null},{"n":"Шалап","k":"Шалап","s":"Шалап","p":790,"sec":13,"o":["250 мл","1 л"],"op":[790,2290]},{"n":"Шубат","k":"Шұбат","s":"Шубат","p":1200,"sec":13,"o":["250 мл","1 л"],"op":[1200,3810]},{"n":"Кунан кумыс","k":"Құнан қымыз","s":"Кумыс","p":1200,"sec":13,"o":["250 мл","1 л"],"op":[1200,3810]},{"n":"Куртоба 1 л","k":"Құртоба 1 л","s":"Куртоба","p":3190,"sec":13,"o":null,"op":null},{"n":"Hot shot","k":"Hot shot","s":"Hot shot","p":790,"sec":13,"o":null,"op":null},{"n":"TAL Kombucha","k":"TAL Kombucha","s":"Комбуча","p":2290,"sec":13,"o":null,"op":null},{"n":"Смузи тыква-облепиха 0,3 л","k":"Асқабақ-шырғанақ смузи 0,3 л","s":"Смузи тыква-облепиха","p":2690,"sec":13,"o":null,"op":null},{"n":"Смузи тыква-яблоко 0,3 л","k":"Асқабақ-алма смузи 0,3 л","s":"Смузи тыква-яблоко","p":2690,"sec":13,"o":null,"op":null},{"n":"Эспрессо","k":"Эспрессо","s":"Эспрессо","p":990,"sec":14,"o":null,"op":null},{"n":"Эспрессо допио","k":"Эспрессо допио","s":"Допио","p":1290,"sec":14,"o":null,"op":null},{"n":"Американо","k":"Американо","s":"Американо","p":1390,"sec":14,"o":null,"op":null},{"n":"Американо тары","k":"Американо тары","s":"Американо тары","p":1590,"sec":14,"o":null,"op":null},{"n":"Капучино","k":"Капучино","s":"Капучино","p":1490,"sec":14,"o":null,"op":null},{"n":"Капучино тары","k":"Капучино тары","s":"Капучино тары","p":1590,"sec":14,"o":null,"op":null},{"n":"Латте","k":"Латте","s":"Латте","p":1490,"sec":14,"o":null,"op":null},{"n":"Флэт уайт","k":"Флэт уайт","s":"Флэт уайт","p":1590,"sec":14,"o":null,"op":null},{"n":"Аффогато","k":"Аффогато","s":"Аффогато","p":1690,"sec":14,"o":null,"op":null},{"n":"Фраппучино","k":"Фраппучино","s":"Фраппучино","p":1890,"sec":14,"o":null,"op":null},{"n":"Айс кофе","k":"Айс кофе","s":"Айс кофе","p":1890,"sec":14,"o":["американо","капучино","латте"],"op":null},{"n":"Капучино или латте на альтернативном молоке","k":"Баламалы сүтпен капучино немесе латте","s":"Альт. молоко","p":1990,"sec":14,"o":["капучино","латте"],"op":null},{"n":"Горячий шоколад «Kazakhstan» с маршмеллоу","k":"Маршмеллоуы бар «Қазақстан» ыстық шоколады","s":"Горячий шоколад","p":2190,"sec":14,"o":null,"op":null},{"n":"Эспрессо тоник","k":"Эспрессо тоник","s":"Эспрессо тоник","p":2390,"sec":14,"o":null,"op":null},{"n":"Бамбл кофе","k":"Бамбл кофе","s":"Бамбл","p":2390,"sec":14,"o":null,"op":null},{"n":"Кофе по-турецки с финиками цуккари на 2 персоны","k":"Түрік кофесі цуккари құрмасымен 2 адамға","s":"Кофе по-турецки","p":2390,"sec":14,"o":null,"op":null},{"n":"Кофе по-арабски с финиками цуккари на 2 персоны 0,7 л","k":"Араб кофесі цуккари құрмасымен 2 адамға 0,7 л","s":"Кофе по-арабски","p":3990,"sec":14,"o":null,"op":null},{"n":"Чай масала","k":"Масала шәйі","s":"Масала","p":2840,"sec":15,"o":null,"op":null},{"n":"Гранатовый чай 0,25 л","k":"Анарлы шай 0,25 л","s":"Гранатовый чай","p":2690,"sec":15,"o":null,"op":null},{"n":"Классический чёрный чай","k":"Классикалық қара шай","s":"Чёрный чай","p":1590,"sec":15,"o":["1,1 л","1,6 л"],"op":[1590,2190]},{"n":"Спешл сенча","k":"Спешл сенча","s":"Сенча","p":1590,"sec":15,"o":["1,1 л","1,6 л"],"op":[1590,2190]},{"n":"Эрл Грей блю","k":"Эрл Грей блю","s":"Эрл Грей","p":1590,"sec":15,"o":["1,1 л","1,6 л"],"op":[1590,2290]},{"n":"Грин жасмин","k":"Грин жасмин","s":"Жасмин","p":1590,"sec":15,"o":["1,1 л","1,6 л"],"op":[1590,2290]},{"n":"Молочный улун","k":"Сүтті улун","s":"Улун","p":1590,"sec":15,"o":["1,1 л","1,6 л"],"op":[1590,2290]},{"n":"Горный TAL чай","k":"Таулы TAL шайы","s":"Горный чай","p":2790,"sec":15,"o":["1,1 л","1,6 л"],"op":[2790,3390]},{"n":"Сосновый лес","k":"Қарағайлы орман","s":"Сосновый лес","p":2790,"sec":15,"o":["1,1 л","1,6 л"],"op":[2790,3390]},{"n":"Алатау","k":"Алатау","s":"Алатау","p":2790,"sec":15,"o":["1,1 л","1,6 л"],"op":[2790,3390]},{"n":"Малина-имбирь","k":"Зімбір-таңқурай","s":"Малина-имбирь","p":2790,"sec":15,"o":["1,1 л","1,6 л"],"op":[2790,3390]},{"n":"Облепиха-имбирь","k":"Зімбір – шырғанақ","s":"Облепиха-имбирь","p":2790,"sec":15,"o":["1,1 л","1,6 л"],"op":[2790,3390]},{"n":"Облепиха-апельсин","k":"Шырғанақ-апельсин","s":"Облепиха-апельсин","p":2790,"sec":15,"o":["1,1 л","1,6 л"],"op":[2790,3390]},{"n":"Ягодная симфония чай","k":"Жидек симфониясы шайы","s":"Ягодный чай","p":2790,"sec":15,"o":["1,1 л","1,6 л"],"op":[2790,3390]},{"n":"Айва-груша-шиповник","k":"Айва-алмұрт-итмұрын","s":"Айва-груша-шиповник","p":2790,"sec":15,"o":["1,1 л","1,6 л"],"op":[2790,3390]},{"n":"Мандарин-клюква","k":"Мандарин-мүкжидек","s":"Мандарин-клюква","p":2790,"sec":15,"o":["1,1 л","1,6 л"],"op":[2790,3390]},{"n":"Чай по-казахски с талканом и тары","k":"Қазақша шәй талқан мен тарыдан","s":"Чай по-казахски","p":2790,"sec":15,"o":["1,1 л","1,6 л"],"op":[2790,3390]},{"n":"Жиде чай","k":"Жиде шайы","s":"Жиде","p":2790,"sec":15,"o":["1,1 л","1,6 л"],"op":[2790,3390]},{"n":"Лимон к чаю","k":"Шайға лимон","s":"Лимон","p":400,"sec":15,"o":null,"op":null},{"n":"Молоко к чаю","k":"Шайға сүт","s":"Молоко","p":400,"sec":15,"o":null,"op":null},{"n":"Мёд Jantaq","k":"Бал Jantaq","s":"Мёд","p":690,"sec":15,"o":null,"op":null},{"n":"Варенье из сосновых шишек","k":"Қарағай бүршігінен тосап","s":"Варенье шишки","p":790,"sec":15,"o":null,"op":null},{"n":"Ассорти джем","k":"Джем ассорти","s":"Джем ассорти","p":790,"sec":15,"o":null,"op":null},{"n":"Ассорти орехи","k":"Жаңғақтар ассорти","s":"Орехи ассорти","p":790,"sec":15,"o":null,"op":null},{"n":"Орехи к чаю","k":"Шәйға арналған жаңғақтар","s":"Орехи к чаю","p":4700,"sec":15,"o":null,"op":null},{"n":"Морс клюквенный","k":"Мүкжидек морсы","s":"Морс","p":1790,"sec":16,"o":["0,5 л","1 л"],"op":[1790,3290]},{"n":"Ананас-щавель","k":"Ананас-қымыздық","s":"Ананас-щавель","p":1790,"sec":16,"o":["0,5 л","1 л"],"op":[1790,3390]},{"n":"Апельсин-киви","k":"Апельсин-киви","s":"Апельсин-киви","p":1790,"sec":16,"o":["0,5 л","1 л"],"op":[1790,3390]},{"n":"Манго-маракуйя","k":"Манго-маракуйя","s":"Манго-маракуйя","p":1790,"sec":16,"o":["0,5 л","1 л"],"op":[1790,3290]},{"n":"Банан-ананас","k":"Банан-ананас","s":"Банан-ананас","p":1790,"sec":16,"o":["0,5 л","1 л"],"op":[1790,3390]},{"n":"Ягодная симфония","k":"Жидек","s":"Ягодная симфония","p":1790,"sec":16,"o":["0,5 л","1 л"],"op":[1790,3290]},{"n":"Авторский лимонад TAL","k":"Авторлық лимонад TAL","s":"Лимонад TAL","p":1790,"sec":16,"o":["0,5 л","1 л"],"op":[1790,3590]},{"n":"Гранатовый фреш 0,25 л","k":"Анар фреші 0,25 л","s":"Гранатовый фреш","p":3510,"sec":17,"o":null,"op":null},{"n":"Гранатовый глинтвейн 0,25 л","k":"Анарлы глинтвейн 0,25 л","s":"Глинтвейн","p":3740,"sec":17,"o":null,"op":null},{"n":"Фреш яблоко 0,25 л","k":"Алма фреші 0,25 л","s":"Фреш яблоко","p":2490,"sec":17,"o":null,"op":null},{"n":"Фреш апельсин 0,25 л","k":"Апельсин фреші 0,25 л","s":"Фреш апельсин","p":2490,"sec":17,"o":null,"op":null},{"n":"Фреш грейпфрут 0,25 л","k":"Грейпфрут фреші 0,25 л","s":"Фреш грейпфрут","p":2490,"sec":17,"o":null,"op":null},{"n":"Смузи клубника-банан 0,3 л","k":"Құлпынай-банан смузи 0,3 л","s":"Смузи клубника-банан","p":2790,"sec":17,"o":null,"op":null},{"n":"Смузи шпинат-яблоко 0,3 л","k":"Шпинат-алма смузи 0,3 л","s":"Смузи шпинат-яблоко","p":2790,"sec":17,"o":null,"op":null},{"n":"Вода Miglior 0,5 л","k":"Miglior суы 0,5 л","s":"Miglior","p":950,"sec":18,"o":null,"op":null},{"n":"Вода Набеглави 0,5 л","k":"Набеглави суы 0,5 л","s":"Набеглави","p":1090,"sec":18,"o":null,"op":null},{"n":"Coca-Cola / Coca-Cola Zero 0,25 л","k":"Coca-Cola / Coca-Cola Zero 0,25 л","s":"Кола","p":1190,"sec":18,"o":["Coca-Cola","Coca-Cola Zero"],"op":null},{"n":"Borjomi 0,3 л","k":"Borjomi 0,3 л","s":"Borjomi","p":1390,"sec":18,"o":null,"op":null},{"n":"Ice tea","k":"Ice tea","s":"Ice tea","p":1590,"sec":18,"o":["0,3 л · клубника","0,3 л · персик","0,3 л · лимон","1 л · клубника","1 л · персик","1 л · лимон"],"op":[1590,1590,1590,3150,3150,3150]},{"n":"Молочный коктейль Oreo 0,3 л","k":"Oreo сүтті коктейлі 0,3 л","s":"Коктейль Oreo","p":2790,"sec":18,"o":null,"op":null},{"n":"Молочный коктейль Snickers 0,3 л","k":"Snickers сүтті коктейлі 0,3 л","s":"Коктейль Snickers","p":2790,"sec":18,"o":null,"op":null},{"n":"Молочный коктейль Bounty 0,3 л","k":"Bounty сүтті коктейлі 0,3 л","s":"Коктейль Bounty","p":2790,"sec":18,"o":null,"op":null},{"n":"Молочный коктейль банан 0,3 л","k":"Банан сүтті коктейлі 0,3 л","s":"Коктейль банан","p":2790,"sec":18,"o":null,"op":null}]};
+var E = VoiceEngine.createEngine(MENU);
+var items = MENU.items, secs = MENU.secs;
+var GROUPS = ['Горячие','Салаты','Выпечка','Бар','Десерты'];
+
+function $(s){ return document.querySelector(s); }
+function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function fmt(n){ return n ? String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' ₸' : ''; }
+var store = {
+  get: function(k, d){ try { var v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch(e){ return d; } },
+  set: function(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
+};
+
+/* ---------- состояние ---------- */
+var order = store.get('tal-vo-order', []).filter(function(l){ return items[l.i]; });
+var cards = [], live = [], cid = 0, lastAdd = null, toastTimer = 0, heardTimer = 0;
+$('#tbl').value = store.get('tal-vo-table', '');
+
+function saveOrder(){ store.set('tal-vo-order', order); }
+function label(l){ var it = items[l.i]; return it.s + (l.o !== null && it.o ? ' (' + it.o[l.o] + ')' : ''); }
+function count(){ return order.reduce(function(a, l){ return a + l.q; }, 0); }
+function updateCount(){ var c = count(), el = $('#cnt'); el.textContent = c; el.classList.toggle('zero', !c); }
+
+/* ---------- добавление в заказ ---------- */
+function addLine(i, o, q, note){
+  note = note || '';
+  var ln = order.filter(function(l){ return l.i === i && l.o === o && l.note === note; })[0];
+  if (ln) ln.q += q; else order.push({ i: i, o: o, q: q, note: note });
+  lastAdd = { i: i, o: o, q: q, note: note };
+  saveOrder(); updateCount();
+  toast(label({ i: i, o: o }) + ' ×' + q + ' в заказе', 'Отменить', undo);
+  if (!$('#sheetList').hidden) renderList();
+  if (!$('#sheetMenu').hidden) renderMenu();
+}
+function undo(){
+  if (!lastAdd) return;
+  var a = lastAdd, k = -1;
+  order.forEach(function(l, idx){ if (l.i === a.i && l.o === a.o && l.note === a.note) k = idx; });
+  if (k >= 0){ order[k].q -= a.q; if (order[k].q <= 0) order.splice(k, 1); }
+  lastAdd = null; saveOrder(); updateCount(); hideToast();
+  if (!$('#sheetList').hidden) renderList();
+  if (!$('#sheetMenu').hidden) renderMenu();
+}
+
+/* ---------- всплывающая подсказка ---------- */
+function toast(text, btn, fn){
+  var t = $('#toast');
+  t.innerHTML = '<span>' + esc(text) + '</span>' + (btn ? '<button type="button">' + esc(btn) + '</button>' : '');
+  t.hidden = false;
+  var b = t.querySelector('button'); if (b) b.onclick = fn;
+  clearTimeout(toastTimer); toastTimer = setTimeout(hideToast, 4000);
+  // подсказка живёт поверх открытого листа
+  var open = document.querySelector('.sheet:not([hidden])');
+  t.className = 'toast' + (open ? ' insheet' : '');
+  t.style.zIndex = open ? 60 : 40;
+  if (open) t.style.bottom = 'calc(90px + env(safe-area-inset-bottom))'; else t.style.bottom = '';
+}
+function hideToast(){ $('#toast').hidden = true; }
+
+/* ---------- карточки ---------- */
+function priceOf(it){ return it.op ? 'от ' + fmt(Math.min.apply(null, it.op)) : fmt(it.p); }
+var ICON_SEARCH = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>';
+function cardHTML(c){
+  var x = '<button class="ic" data-act="dismiss" type="button" aria-label="Убрать карточку">×</button>';
+  var stepper = '<div class="qty"><button data-act="dec" type="button" aria-label="Меньше">−</button><b>' + c.qty + '</b><button data-act="inc" type="button" aria-label="Больше">+</button></div>';
+  var note = c.note ? '<span class="note">' + esc(c.note) + '</span>' : '';
+  if (c.kind === 'cat'){
+    var sc = secs[c.sec];
+    return '<article class="card" data-cid="' + c.id + '"><div class="chead">' +
+      '<button class="body" data-act="cat" type="button"><span class="name">' + esc(sc.ru) + '</span><span class="full">Какой именно? Откроется список</span></button>' + x + '</div>' +
+      '<div class="foot"><button class="addbtn alt" data-act="cat" type="button">Выбрать из списка</button></div></article>';
+  }
+  if (c.kind === 'multi'){
+    var rows = c.cands.map(function(k){
+      var it = items[k.i];
+      return '<button class="opt" data-act="pick" data-i="' + k.i + '" type="button"><span class="on">' + esc(it.s) + '<span class="os">' + esc(it.n === it.s ? secs[it.sec].ru : it.n) + '</span></span><span class="go">+</span></button>';
+    }).join('');
+    return '<article class="card" data-cid="' + c.id + '"><div class="chead"><div class="body"><span class="name" style="font-size:19px">«' + esc(c.heard) + '»: какой?</span>' + note + '</div>' + x + '</div>' +
+      '<div class="opts">' + rows + '</div><div class="foot">' + stepper +
+      '<button class="addbtn alt" data-act="search" type="button">Искать в меню</button></div></article>';
+  }
+  var it = items[c.cands[0].i], sn = secs[it.sec].note;
+  return '<article class="card" data-cid="' + c.id + '"><div class="chead">' +
+    '<button class="body" data-act="add" type="button"><span class="name">' + esc(it.s) + '</span>' +
+    '<span class="full">' + esc(it.n === it.s ? secs[it.sec].ru : it.n) + (priceOf(it) ? ' · ' + priceOf(it) : '') + '</span>' +
+    (sn ? '<span class="secnote">' + esc(sn) + '</span>' : '') + note + '</button>' +
+    '<button class="ic" data-act="search" type="button" aria-label="Не то. Искать в меню">' + ICON_SEARCH + '</button>' + x + '</div>' +
+    '<div class="foot">' + stepper + '<button class="addbtn" data-act="add" type="button">Добавить ×' + c.qty + '</button></div></article>';
+}
+function renderCards(){
+  $('#cards').innerHTML = cards.map(cardHTML).join('');
+  $('#empty').hidden = cards.length > 0 || live.length > 0;
+  $('#clearAll').hidden = cards.length < 2;
+}
+function renderGhosts(){
+  $('#ghosts').innerHTML = live.map(function(c){
+    var t = c.kind === 'cat' ? secs[c.sec].ru : (c.kind === 'multi' ? items[c.cands[0].i].s + '?' : items[c.cands[0].i].s);
+    return '<div class="ghost"><b>' + esc(t) + '</b>' + (c.qty > 1 ? ' ×' + c.qty : '') + '</div>';
+  }).join('');
+  $('#empty').hidden = cards.length > 0 || live.length > 0;
+}
+function removeCard(id){ cards = cards.filter(function(c){ return c.id !== id; }); renderCards(); }
+function pushCards(list){
+  list.forEach(function(c){ c.id = ++cid; cards.push(c); });
+  renderCards();
+  $('#stage').scrollTop = 0;
+}
+
+$('#cards').addEventListener('click', function(ev){
+  var b = ev.target.closest('[data-act]'); if (!b) return;
+  var el = b.closest('.card'); if (!el) return;
+  var id = +el.dataset.cid, c = cards.filter(function(x){ return x.id === id; })[0]; if (!c) return;
+  var act = b.dataset.act;
+  if (act === 'dismiss') removeCard(id);
+  else if (act === 'inc'){ c.qty = Math.min(c.qty + 1, 20); renderCards(); }
+  else if (act === 'dec'){ c.qty = Math.max(c.qty - 1, 1); renderCards(); }
+  else if (act === 'add') choose(c, c.cands[0].i);
+  else if (act === 'pick') choose(c, +b.dataset.i);
+  else if (act === 'search'){ openMenu({ text: c.heard }); }
+  else if (act === 'cat'){ openMenu({ sec: c.sec }); removeCard(id); }
+});
+$('#clearAll').addEventListener('click', function(){ cards = []; renderCards(); });
+
+function choose(c, i){
+  var it = items[i];
+  if (it.o){ openOpt(i, c.qty, c.note, c.id); return; }
+  addLine(i, null, c.qty, c.note); removeCard(c.id);
+}
+
+/* ---------- выбор варианта (размер, начинка) ---------- */
+function openOpt(i, q, note, cardId){
+  var it = items[i];
+  $('#optTitle').textContent = it.s;
+  $('#optBody').innerHTML = it.o.map(function(o, k){
+    return '<button class="mi" data-k="' + k + '" type="button"><span class="t"><b>' + esc(o) + '</b></span><span class="p">' + (it.op ? fmt(it.op[k]) : '') + '</span></button>';
+  }).join('');
+  $('#optBody').onclick = function(ev){
+    var b = ev.target.closest('[data-k]'); if (!b) return;
+    addLine(i, +b.dataset.k, q, note);
+    if (cardId) removeCard(cardId);
+    closeSheet('#sheetOpt');
+  };
+  openSheet('#sheetOpt');
+}
+
+/* ---------- листы ---------- */
+function openSheet(id){ $(id).hidden = false; }
+function closeSheet(id){ $(id).hidden = true; }
+document.addEventListener('click', function(ev){
+  var b = ev.target.closest('[data-close]'); if (b) b.closest('.sheet').hidden = true;
+});
+
+/* ---------- список заказа ---------- */
+var editNote = -1;
+function renderList(){
+  var box = $('#listBody'), t = $('#tbl').value.trim();
+  $('#listTbl').textContent = t ? 'стол ' + t : '';
+  if (!order.length){ box.innerHTML = '<p class="muted">Пока пусто. Скажи позицию или найди её в меню.</p>'; return; }
+  var html = '';
+  GROUPS.forEach(function(g){
+    var ls = [];
+    order.forEach(function(l, idx){ if (secs[items[l.i].sec].g === g) ls.push([l, idx]); });
+    if (!ls.length) return;
+    html += '<h3>' + g + '</h3>';
+    ls.forEach(function(p){
+      var l = p[0], idx = p[1];
+      html += '<div class="row"><div class="rn"><b>' + esc(label(l)) + '</b>' +
+        (editNote === idx ? '<input class="noteinput" data-idx="' + idx + '" value="' + esc(l.note) + '" placeholder="Например: без лука" enterkeyhint="done">' : (l.note ? '<small>' + esc(l.note) + '</small>' : '')) +
+        '</div><button class="noteb" data-act="note" data-idx="' + idx + '" type="button">заметка</button>' +
+        '<div class="qty"><button data-act="ldec" data-idx="' + idx + '" type="button" aria-label="Меньше">−</button><b>' + l.q + '</b><button data-act="linc" data-idx="' + idx + '" type="button" aria-label="Больше">+</button></div></div>';
+    });
+  });
+  box.innerHTML = html;
+  var inp = box.querySelector('.noteinput'); if (inp) inp.focus();
+}
+$('#listBody').addEventListener('click', function(ev){
+  var b = ev.target.closest('[data-act]'); if (!b) return;
+  var idx = +b.dataset.idx, l = order[idx], a = b.dataset.act;
+  if (a === 'linc') l.q = Math.min(l.q + 1, 99);
+  else if (a === 'ldec'){ l.q -= 1; if (l.q <= 0) order.splice(idx, 1); }
+  else if (a === 'note'){ editNote = editNote === idx ? -1 : idx; renderList(); return; }
+  saveOrder(); updateCount(); renderList();
+});
+function commitNote(inp){
+  var idx = +inp.dataset.idx, l = order[idx]; if (!l) return;
+  var v = inp.value.trim();
+  var dup = order.filter(function(o, k){ return k !== idx && o.i === l.i && o.o === l.o && o.note === v; })[0];
+  if (dup){ dup.q += l.q; order.splice(idx, 1); } else l.note = v;
+  editNote = -1; saveOrder(); updateCount(); renderList();
+}
+$('#listBody').addEventListener('keydown', function(ev){
+  if (ev.key === 'Enter' && ev.target.classList.contains('noteinput')){ ev.preventDefault(); commitNote(ev.target); }
+});
+$('#listBody').addEventListener('focusout', function(ev){
+  if (ev.target.classList && ev.target.classList.contains('noteinput') && editNote >= 0) commitNote(ev.target);
+});
+$('#btnList').addEventListener('click', function(){ editNote = -1; renderList(); openSheet('#sheetList'); });
+
+function orderText(){
+  var out = [], t = $('#tbl').value.trim();
+  if (t) out.push('Стол ' + t);
+  GROUPS.forEach(function(g){
+    var ls = order.filter(function(l){ return secs[items[l.i].sec].g === g; });
+    if (!ls.length) return;
+    out.push(g);
+    ls.forEach(function(l){ out.push('• ' + label(l) + ' ×' + l.q + (l.note ? ' — ' + l.note : '')); });
+  });
+  return out.join('\n');
+}
+function copyText(txt, done){
+  function fb(){
+    var a = document.createElement('textarea'); a.value = txt; a.setAttribute('readonly', '');
+    a.style.cssText = 'position:fixed;top:0;left:0;opacity:0';
+    document.body.appendChild(a); a.select(); a.setSelectionRange(0, txt.length);
+    var ok = false; try { ok = document.execCommand('copy'); } catch(e){}
+    a.remove(); done(ok);
+  }
+  if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(txt).then(function(){ done(true); }, fb); else fb();
+}
+$('#btnCopy').addEventListener('click', function(){
+  if (!order.length) return;
+  var b = this;
+  copyText(orderText(), function(ok){
+    b.textContent = ok ? 'Скопировано' : 'Не вышло';
+    setTimeout(function(){ b.textContent = 'Копировать'; }, 1800);
+  });
+});
+var clearArmed = 0;
+$('#btnClear').addEventListener('click', function(){
+  var b = this;
+  if (!order.length) return;
+  if (!clearArmed){
+    clearArmed = setTimeout(function(){ clearArmed = 0; b.textContent = 'Очистить'; }, 3000);
+    b.textContent = 'Точно очистить?'; return;
+  }
+  clearTimeout(clearArmed); clearArmed = 0; b.textContent = 'Очистить';
+  order = []; lastAdd = null; saveOrder(); updateCount(); renderList();
+});
+$('#tbl').addEventListener('input', function(){ store.set('tal-vo-table', this.value.trim()); });
+
+/* ---------- меню и поиск ---------- */
+var menuSec = -1;
+function openMenu(opts){
+  opts = opts || {};
+  $('#q').value = opts.text || '';
+  menuSec = opts.sec !== undefined ? opts.sec : -1;
+  renderMenu(); openSheet('#sheetMenu');
+  var b = $('#menuBody'); b.scrollTop = 0;
+}
+function qtyIn(i){ return order.reduce(function(a, l){ return a + (l.i === i ? l.q : 0); }, 0); }
+function miHTML(i, showSec){
+  var it = items[i], n = qtyIn(i);
+  var sub = (it.n === it.s ? '' : it.n) + (showSec ? (it.n === it.s ? '' : ' · ') + secs[it.sec].ru : '');
+  return '<button class="mi" data-i="' + i + '" type="button"><span class="t"><b>' + esc(it.s) + '</b>' + (sub ? '<small>' + esc(sub) + '</small>' : '') + '</span>' +
+    '<span class="p">' + priceOf(it) + '</span>' + (n ? '<span class="n">' + n + '</span>' : '<span class="plus">+</span>') + '</button>';
+}
+function renderMenu(){
+  var text = $('#q').value.trim(), html = '';
+  $('#chips').innerHTML = '<button data-s="-1" class="' + (menuSec < 0 ? 'on' : '') + '" type="button">Все</button>' +
+    secs.map(function(s, k){ return '<button data-s="' + k + '" class="' + (menuSec === k ? 'on' : '') + '" type="button">' + esc(s.ru) + '</button>'; }).join('');
+  if (text){
+    var r = E.search(text, 40).filter(function(x){ return menuSec < 0 || items[x.i].sec === menuSec; });
+    html = r.length ? r.map(function(x){ return miHTML(x.i, true); }).join('') : '<p class="muted">Не нашёл. Попробуй другое слово.</p>';
+  } else {
+    secs.forEach(function(s, k){
+      if (menuSec >= 0 && menuSec !== k) return;
+      html += '<h3>' + esc(s.ru) + '</h3>' + (s.note ? '<p class="muted" style="padding:2px 16px 6px;text-align:left">' + esc(s.note) + '</p>' : '');
+      items.forEach(function(it, i){ if (it.sec === k) html += miHTML(i, false); });
+    });
+  }
+  $('#menuBody').innerHTML = html;
+}
+$('#q').addEventListener('input', renderMenu);
+$('#chips').addEventListener('click', function(ev){
+  var b = ev.target.closest('[data-s]'); if (!b) return;
+  menuSec = +b.dataset.s; renderMenu(); $('#menuBody').scrollTop = 0;
+});
+$('#menuBody').addEventListener('click', function(ev){
+  var b = ev.target.closest('[data-i]'); if (!b) return;
+  var i = +b.dataset.i;
+  if (items[i].o) openOpt(i, 1, '', 0); else addLine(i, null, 1, '');
+});
+$('#btnMenu').addEventListener('click', function(){ openMenu({}); });
+
+/* ---------- разбор фразы ---------- */
+function handlePhrase(text){
+  text = (text || '').trim(); if (!text) return;
+  var list = E.parse(text);
+  if (list.length){ pushCards(list); showHeard(text, false); }
+  else showHeard(text, true);
+}
+function showHeard(text, miss){
+  clearTimeout(heardTimer);
+  var el = $('#heard');
+  el.innerHTML = '<span class="hl' + (miss ? ' miss' : '') + '">' + (miss ? 'Не нашёл в меню: ' : 'Услышал: ') + '«' + esc(text) + '»</span>' + (miss ? '<button type="button" id="heardFind">Искать</button>' : '');
+  if (miss){ var b = $('#heardFind'); if (b) b.onclick = function(){ openMenu({ text: text }); }; }
+  heardTimer = setTimeout(function(){ if (!listening) el.innerHTML = ''; }, 5000);
+}
+function onInterim(text){
+  live = text ? E.parse(text) : [];
+  renderGhosts();
+  if (text){ clearTimeout(heardTimer); $('#heard').innerHTML = '<span class="hl">' + esc(text) + '</span>'; }
+}
+
+/* ---------- ввод текстом ---------- */
+$('#btnType').addEventListener('click', function(){
+  var bar = $('#typeBar'); bar.hidden = !bar.hidden;
+  this.classList.toggle('on', !bar.hidden);
+  if (!bar.hidden) $('#txt').focus();
+});
+$('#typeBar').addEventListener('submit', function(ev){
+  ev.preventDefault();
+  var v = $('#txt').value; $('#txt').value = '';
+  handlePhrase(v);
+});
+
+/* ---------- голос ---------- */
+var SR = (window.self !== window.top) ? null : (window.SpeechRecognition || window.webkitSpeechRecognition); // внутри чужой рамки микрофон недоступен
+var listening = false, rec = null, lang = store.get('tal-vo-lang', 'ru-RU'), restarts = [], wake = null;
+
+function setMic(){
+  var m = $('#btnMic');
+  m.classList.toggle('on', listening);
+  m.classList.toggle('off', !SR);
+  m.setAttribute('aria-pressed', listening ? 'true' : 'false');
+  $('#micLbl').textContent = listening ? 'Слушаю' : 'Заказ';
+  $('#btnLang').textContent = lang === 'kk-KZ' ? 'KZ' : 'RU';
+}
+function noVoice(){
+  $('#typeBar').hidden = false; $('#btnType').classList.add('on');
+  $('#heard').innerHTML = '<span class="hl miss">Голос здесь недоступен. Открой страницу в Safari или Chrome. Можно писать фразу ниже: на клавиатуре есть значок микрофона.</span>';
+}
+function micFail(msg){
+  listening = false; setMic(); releaseWake();
+  $('#heard').innerHTML = '<span class="hl miss">' + esc(msg) + '</span>';
+}
+function spawn(){
+  var handled = -1;
+  rec = new SR();
+  rec.lang = lang; rec.continuous = true; rec.interimResults = true; rec.maxAlternatives = 1;
+  rec.onresult = function(ev){
+    var interim = '';
+    for (var i = ev.resultIndex; i < ev.results.length; i++){
+      var r = ev.results[i];
+      if (r.isFinal){ if (i > handled){ handled = i; live = []; renderGhosts(); handlePhrase(r[0].transcript); } }
+      else interim += r[0].transcript;
+    }
+    onInterim(interim);
+  };
+  rec.onerror = function(ev){
+    if (ev.error === 'not-allowed') micFail('Нет доступа к микрофону. Разреши его для этого сайта в настройках Safari.');
+    else if (ev.error === 'service-not-allowed') micFail('Диктовка выключена. Включи её: Настройки iPhone, Основные, Клавиатура, Включить диктовку.');
+    else if (ev.error === 'network') micFail('Нет интернета: распознавание речи работает только онлайн.');
+    else if (ev.error === 'language-not-supported') micFail('Этот язык распознавания не поддерживается. Переключи на RU.');
+  };
+  rec.onend = function(){
+    live = []; renderGhosts();
+    if (!listening) return;
+    var now = Date.now(); restarts = restarts.filter(function(t){ return now - t < 6000; }); restarts.push(now);
+    if (restarts.length > 6){ micFail('Микрофон не запускается. Нажми «Заказ» ещё раз.'); return; }
+    setTimeout(function(){ if (listening) spawn(); }, 200);
+  };
+  try { rec.start(); } catch(e){ micFail('Микрофон не запустился. Нажми «Заказ» ещё раз.'); }
+}
+function requestWake(){
+  try { if (navigator.wakeLock) navigator.wakeLock.request('screen').then(function(w){ wake = w; }, function(){}); } catch(e){}
+}
+function releaseWake(){ try { if (wake){ wake.release(); wake = null; } } catch(e){} }
+document.addEventListener('visibilitychange', function(){ if (listening && document.visibilityState === 'visible' && !wake) requestWake(); });
+
+$('#btnMic').addEventListener('click', function(){
+  if (!SR){ noVoice(); return; }
+  if (listening){
+    listening = false; setMic(); releaseWake();
+    try { rec.stop(); } catch(e){}
+    return;
+  }
+  listening = true; restarts = []; setMic(); requestWake(); spawn();
+  $('#heard').innerHTML = '<span class="hl">Говори: позиция и количество</span>';
+});
+$('#btnLang').addEventListener('click', function(){
+  lang = lang === 'ru-RU' ? 'kk-KZ' : 'ru-RU';
+  store.set('tal-vo-lang', lang); setMic();
+  if (listening){ try { rec.stop(); } catch(e){} }
+});
+
+/* ---------- старт ---------- */
+setMic(); updateCount(); renderCards();
+if (!SR) noVoice();
+window.__tal = { parse: function(t){ return E.parse(t); }, phrase: handlePhrase, interim: onInterim, get order(){ return order; } };
+})();
+</script>
+</body>
+</html>
