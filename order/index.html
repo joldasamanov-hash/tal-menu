@@ -85,7 +85,7 @@ svg{width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:1.8;stroke-l
 .heard .miss{color:var(--warn)}
 .clearall{align-self:center;color:var(--muted);font-size:14px;min-height:36px;text-decoration:underline;text-underline-offset:3px}
 
-.typebar{display:flex;gap:8px;padding:6px 16px 8px}
+.typebar{display:flex;gap:8px;padding:6px 16px 30px}
 .typebar input{flex:1;height:48px;border-radius:14px;border:1px solid var(--line);background:var(--panel);padding:0 14px;font-size:17px;min-width:0}
 .typebar button{height:48px;padding:0 18px;border-radius:14px;background:var(--raise);border:1px solid var(--gold);color:var(--gold);font-weight:500}
 
@@ -172,6 +172,7 @@ svg{width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:1.8;stroke-l
   </main>
 
   <div id="heard" class="heard" aria-live="polite"></div>
+  <div id="diag" style="padding:0 16px 4px;color:var(--muted);font-size:12px"></div>
 
   <form id="typeBar" class="typebar" hidden autocomplete="off">
     <input id="txt" type="text" placeholder="Напиши или продиктуй клавиатурой" enterkeyhint="send" aria-label="Фраза заказа">
@@ -587,6 +588,8 @@ var store = {
   set: function(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
 };
 
+var SR = (window.self !== window.top) ? null : (window.SpeechRecognition || window.webkitSpeechRecognition); // внутри чужой рамки микрофон недоступен
+
 /* ---------- состояние ---------- */
 var order = store.get('tal-vo-order', []).filter(function(l){ return items[l.i]; });
 var cards = [], live = [], cid = 0, lastAdd = null, toastTimer = 0, heardTimer = 0;
@@ -884,14 +887,22 @@ $('#btnType').addEventListener('click', function(){
   this.classList.toggle('on', !bar.hidden);
   if (!bar.hidden) $('#txt').focus();
 });
+var idleT = 0;
+function commitTyped(){
+  var inp = $('#txt'), v = inp.value; inp.value = ''; live = []; renderGhosts(); handlePhrase(v);
+}
+$('#txt').addEventListener('input', function(){
+  var v = this.value.trim();
+  live = v ? E.parse(v) : []; renderGhosts();
+  clearTimeout(idleT);
+  // без распознавания речи: фраза уходит в карточки сама после паузы в диктовке
+  if (!SR && v) idleT = setTimeout(commitTyped, 2000);
+});
 $('#typeBar').addEventListener('submit', function(ev){
-  ev.preventDefault();
-  var v = $('#txt').value; $('#txt').value = '';
-  handlePhrase(v);
+  ev.preventDefault(); clearTimeout(idleT); commitTyped();
 });
 
 /* ---------- голос ---------- */
-var SR = (window.self !== window.top) ? null : (window.SpeechRecognition || window.webkitSpeechRecognition); // внутри чужой рамки микрофон недоступен
 var listening = false, rec = null, lang = store.get('tal-vo-lang', 'ru-RU'), restarts = [], wake = null;
 
 function setMic(){
@@ -902,9 +913,16 @@ function setMic(){
   $('#micLbl').textContent = listening ? 'Слушаю' : 'Заказ';
   $('#btnLang').textContent = lang === 'kk-KZ' ? 'KZ' : 'RU';
 }
+function diag(){
+  var ua = navigator.userAgent, m = ua.match(/OS (\d+)[_.](\d+)/);
+  var ios = /iPhone|iPad|iPod/.test(ua) ? 'iOS ' + (m ? m[1] + '.' + m[2] : '?') : 'не iOS';
+  return ios + ' · в рамке: ' + (window.self !== window.top ? 'да' : 'нет') + ' · SpeechRecognition: ' + ((window.SpeechRecognition || window.webkitSpeechRecognition) ? 'есть' : 'нет') + (navigator.standalone ? ' · с экрана «Домой»' : '');
+}
 function noVoice(){
   $('#typeBar').hidden = false; $('#btnType').classList.add('on');
-  $('#heard').innerHTML = '<span class="hl miss">Голос здесь недоступен. Открой страницу в Safari или Chrome. Можно писать фразу ниже: на клавиатуре есть значок микрофона.</span>';
+  $('#heard').innerHTML = '<span class="hl miss" style="white-space:normal">Голос здесь не работает. Скопируй адрес и открой его в самом Safari. Пока диктуй клавиатурой: значок микрофона на ней.</span><button type="button" id="copyUrl">Копировать адрес</button>';
+  var b = $('#copyUrl'); if (b) b.onclick = function(){ var t = this; copyText(location.href, function(ok){ t.textContent = ok ? 'Скопировано' : 'Не вышло'; }); };
+  $('#diag').textContent = 'Диагностика: ' + diag();
 }
 function micFail(msg){
   listening = false; setMic(); releaseWake();
@@ -945,7 +963,7 @@ function releaseWake(){ try { if (wake){ wake.release(); wake = null; } } catch(
 document.addEventListener('visibilitychange', function(){ if (listening && document.visibilityState === 'visible' && !wake) requestWake(); });
 
 $('#btnMic').addEventListener('click', function(){
-  if (!SR){ noVoice(); return; }
+  if (!SR){ noVoice(); $('#txt').focus(); return; }
   if (listening){
     listening = false; setMic(); releaseWake();
     try { rec.stop(); } catch(e){}
